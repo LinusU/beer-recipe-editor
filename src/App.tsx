@@ -2,9 +2,11 @@
 /// <reference types="@beerjson/beerjson/types/ts/beerjson" />
 
 import React, { ChangeEvent, useState } from 'react'
+import FancySelect from 'react-select'
 import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 import weakKey from 'weak-key'
+import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, hopAdditions, miscellaneousAdditions } from './data'
 
 const accentColor = '#FB8B24'
 
@@ -235,9 +237,12 @@ const App: React.FC = () => {
         <tbody>
           {recipe.ingredients.fermentable_additions.map((item) => (
             <tr key={weakKey(item)}>
-              <td><HStack>{item.type}</HStack></td>
-              <td><HStack>{item.name}</HStack></td>
-              <td><HStack>{item.producer}</HStack></td>
+              <td colSpan={3}>
+                <FancySelect
+                  options={fermentableAdditions.map(item => formatFermentable(item))}
+                  value={formatFermentable(item)}
+                />
+              </td>
               <td><HStack><MassOrVolumeInput value={item.amount} /></HStack></td>
             </tr>
           ))}
@@ -264,7 +269,12 @@ const App: React.FC = () => {
         <tbody>
           {recipe.ingredients.hop_additions?.map((item) => (
             <tr key={weakKey(item)}>
-              <td>{item.name}</td>
+              <td style={{ minWidth: 200 }}>
+                <FancySelect
+                  options={hopAdditions.map(item => formatHop(item))}
+                  value={formatHop(item)}
+                />
+              </td>
               <td><UseInput value={item.timing?.use} /></td>
               <td><TimeInput value={item.timing?.duration} /></td>
               <td><MassOrVolumeInput value={item.amount} /></td>
@@ -294,8 +304,12 @@ const App: React.FC = () => {
         <tbody>
           {recipe.ingredients.miscellaneous_additions?.map((item) => (
             <tr key={weakKey(item)}>
-              <td>{item.type}</td>
-              <td>{item.name}</td>
+              <td colSpan={2} style={{ minWidth: 200 }}>
+                <FancySelect
+                  options={miscellaneousAdditions.map(item => formatMiscellaneous(item))}
+                  value={formatMiscellaneous(item)}
+                />
+              </td>
               <td><UseInput value={item.timing?.use} /></td>
               <td><TimeInput value={item.timing?.duration} /></td>
               <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
@@ -322,10 +336,12 @@ const App: React.FC = () => {
         <tbody>
           {recipe.ingredients.culture_additions?.map((item) => (
             <tr key={weakKey(item)}>
-              <td>{item.type}</td>
-              <td>{item.form}</td>
-              <td>{item.name}</td>
-              <td>{item.producer}</td>
+              <td colSpan={4}>
+                <FancySelect
+                  options={cultureAdditions.map(item => formatCulture(item))}
+                  value={formatCulture(item)}
+                />
+              </td>
               <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
             </tr>
           ))}
