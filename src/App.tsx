@@ -1,11 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="@beerjson/beerjson/types/ts/beerjson" />
 
+import dotProp from 'dot-prop-immutable'
 import React, { ChangeEvent, useState } from 'react'
 import FancySelect from 'react-select'
 import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 import weakKey from 'weak-key'
+
 import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, hopAdditions, miscellaneousAdditions } from './data'
 
 const accentColor = '#FB8B24'
@@ -170,6 +172,54 @@ const VolumeInput: React.FC<VolumeInputProps> = ({ fontSize, value }) => (
   </>
 )
 
+function addCulture (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.culture_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.culture_additions]
+  list.push({ name: '', amount: { unit: 'g' } } as any)
+
+  return dotProp.set(input, 'recipes.0.ingredients.culture_additions', list)
+}
+
+function addFermentable (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.fermentable_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.fermentable_additions]
+  list.push({ name: '', amount: { unit: 'g' } } as any)
+
+  return dotProp.set(input, 'recipes.0.ingredients.fermentable_additions', list)
+}
+
+function addHop (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.hop_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.hop_additions]
+  list.push({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'g' } } as any)
+
+  return dotProp.set(input, 'recipes.0.ingredients.hop_additions', list)
+}
+
+function addMashStep (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].mash?.mash_steps == null) return input
+
+  const spargeIndex = input.recipes[0].mash.mash_steps.findIndex(item => item.type === 'sparge')
+  if (spargeIndex == null) return input
+
+  const list = [...input.recipes[0].mash.mash_steps]
+  list.splice(spargeIndex, 0, { type: 'temperature', step_temperature: { unit: 'C' }, step_time: { unit: 'min' } } as any)
+
+  return dotProp.set(input, 'recipes.0.mash.mash_steps', list)
+}
+
+function addMiscellaneous (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.miscellaneous_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.miscellaneous_additions]
+  list.push({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'ml' } } as any)
+
+  return dotProp.set(input, 'recipes.0.ingredients.miscellaneous_additions', list)
+}
+
 const App: React.FC = () => {
   const [data, setData] = useState<BeerJSON.BeerJSON>()
 
@@ -246,6 +296,12 @@ const App: React.FC = () => {
               <td><HStack><MassOrVolumeInput value={item.amount} /></HStack></td>
             </tr>
           ))}
+
+          <tr>
+            <td colSpan={4} style={{ textAlign: 'center' }}>
+              <button onClick={() => setData(addFermentable)}>Add fermentable</button>
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -283,6 +339,12 @@ const App: React.FC = () => {
               <td><TextInput value={item.origin} /></td>
             </tr>
           ))}
+
+          <tr>
+            <td colSpan={7} style={{ textAlign: 'center' }}>
+              <button onClick={() => setData(addHop)}>Add hop</button>
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -315,6 +377,12 @@ const App: React.FC = () => {
               <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
             </tr>
           ))}
+
+          <tr>
+            <td colSpan={5} style={{ textAlign: 'center' }}>
+              <button onClick={() => setData(addMiscellaneous)}>Add miscellaneous</button>
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -345,6 +413,12 @@ const App: React.FC = () => {
               <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
             </tr>
           ))}
+
+          <tr>
+            <td colSpan={5} style={{ textAlign: 'center' }}>
+              <button onClick={() => setData(addCulture)}>Add culture</button>
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -364,12 +438,22 @@ const App: React.FC = () => {
 
         <tbody>
           {recipe.mash?.mash_steps?.map((item) => (
-            <tr key={weakKey(item)}>
-              <td>{item.type}</td>
-              <td><VolumeInput value={item.amount} /></td>
-              <td><TemperatureInput value={item.step_temperature} /></td>
-              <td><TimeInput value={item.step_time} /></td>
-            </tr>
+            <>
+              {item.type !== 'sparge' ? null : (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center' }}>
+                    <button onClick={() => setData(addMashStep)}>Add mash temperature step</button>
+                  </td>
+                </tr>
+              )}
+
+              <tr key={weakKey(item)}>
+                <td>{item.type}</td>
+                <td><VolumeInput value={item.amount} /></td>
+                <td><TemperatureInput value={item.step_temperature} /></td>
+                <td><TimeInput value={item.step_time} /></td>
+              </tr>
+            </>
           ))}
 
           <tr>

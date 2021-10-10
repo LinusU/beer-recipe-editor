@@ -135,7 +135,7 @@ export function formatCulture (input: BeerJSON.CultureBase): { label: string, va
   }
 
   return {
-    label: `${icon} ${input.name} (${input.producer})`,
+    label: `${icon} ${input.name}${input.producer == null ? '' : ` (${input.producer})`}`,
     value: `${input.type}~${input.form}~${input.name}~${input.producer}`
   }
 }
