@@ -181,6 +181,15 @@ function addCulture (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | 
   return dotProp.set(input, 'recipes.0.ingredients.culture_additions', list)
 }
 
+function deleteCulture (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.culture_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.culture_additions]
+  list.splice(index, 1)
+
+  return dotProp.set(input, 'recipes.0.ingredients.culture_additions', list)
+}
+
 function addFermentable (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
   if (input?.recipes?.[0].ingredients?.fermentable_additions == null) return input
 
@@ -190,11 +199,29 @@ function addFermentable (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSO
   return dotProp.set(input, 'recipes.0.ingredients.fermentable_additions', list)
 }
 
+function deleteFermentable (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.fermentable_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.fermentable_additions]
+  list.splice(index, 1)
+
+  return dotProp.set(input, 'recipes.0.ingredients.fermentable_additions', list)
+}
+
 function addHop (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
   if (input?.recipes?.[0].ingredients?.hop_additions == null) return input
 
   const list = [...input.recipes[0].ingredients.hop_additions]
   list.push({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'g' } } as any)
+
+  return dotProp.set(input, 'recipes.0.ingredients.hop_additions', list)
+}
+
+function deleteHop (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.hop_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.hop_additions]
+  list.splice(index, 1)
 
   return dotProp.set(input, 'recipes.0.ingredients.hop_additions', list)
 }
@@ -211,11 +238,29 @@ function addMashStep (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON |
   return dotProp.set(input, 'recipes.0.mash.mash_steps', list)
 }
 
+function deleteMashStep (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].mash?.mash_steps == null) return input
+
+  const list = [...input.recipes[0].mash.mash_steps]
+  list.splice(index, 1)
+
+  return dotProp.set(input, 'recipes.0.mash.mash_steps', list)
+}
+
 function addMiscellaneous (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
   if (input?.recipes?.[0].ingredients?.miscellaneous_additions == null) return input
 
   const list = [...input.recipes[0].ingredients.miscellaneous_additions]
   list.push({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'ml' } } as any)
+
+  return dotProp.set(input, 'recipes.0.ingredients.miscellaneous_additions', list)
+}
+
+function deleteMiscellaneous (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
+  if (input?.recipes?.[0].ingredients?.miscellaneous_additions == null) return input
+
+  const list = [...input.recipes[0].ingredients.miscellaneous_additions]
+  list.splice(index, 1)
 
   return dotProp.set(input, 'recipes.0.ingredients.miscellaneous_additions', list)
 }
@@ -281,11 +326,12 @@ const App: React.FC = () => {
             <th>name</th>
             <th>producer</th>
             <th>amount</th>
+            <th />
           </tr>
         </thead>
 
         <tbody>
-          {recipe.ingredients.fermentable_additions.map((item) => (
+          {recipe.ingredients.fermentable_additions.map((item, index) => (
             <tr key={weakKey(item)}>
               <td colSpan={3}>
                 <FancySelect
@@ -294,6 +340,7 @@ const App: React.FC = () => {
                 />
               </td>
               <td><HStack><MassOrVolumeInput value={item.amount} /></HStack></td>
+              <td><button onClick={() => setData(data => deleteFermentable(data, index))}>Delete</button></td>
             </tr>
           ))}
 
@@ -319,11 +366,12 @@ const App: React.FC = () => {
             <th>alpha acid</th>
             <th>year</th>
             <th>origin</th>
+            <th />
           </tr>
         </thead>
 
         <tbody>
-          {recipe.ingredients.hop_additions?.map((item) => (
+          {recipe.ingredients.hop_additions?.map((item, index) => (
             <tr key={weakKey(item)}>
               <td style={{ minWidth: 200 }}>
                 <FancySelect
@@ -337,6 +385,7 @@ const App: React.FC = () => {
               <td><PercentInput value={item.alpha_acid} /></td>
               <td><TextInput value={item.year} /></td>
               <td><TextInput value={item.origin} /></td>
+              <td><button onClick={() => setData(data => deleteHop(data, index))}>Delete</button></td>
             </tr>
           ))}
 
@@ -360,11 +409,12 @@ const App: React.FC = () => {
             <th>timing - use</th>
             <th>timing - duration</th>
             <th>amount</th>
+            <th />
           </tr>
         </thead>
 
         <tbody>
-          {recipe.ingredients.miscellaneous_additions?.map((item) => (
+          {recipe.ingredients.miscellaneous_additions?.map((item, index) => (
             <tr key={weakKey(item)}>
               <td colSpan={2} style={{ minWidth: 200 }}>
                 <FancySelect
@@ -375,6 +425,7 @@ const App: React.FC = () => {
               <td><UseInput value={item.timing?.use} /></td>
               <td><TimeInput value={item.timing?.duration} /></td>
               <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
+              <td><button onClick={() => setData(data => deleteMiscellaneous(data, index))}>Delete</button></td>
             </tr>
           ))}
 
@@ -398,11 +449,12 @@ const App: React.FC = () => {
             <th>name</th>
             <th>producer</th>
             <th>amount</th>
+            <th />
           </tr>
         </thead>
 
         <tbody>
-          {recipe.ingredients.culture_additions?.map((item) => (
+          {recipe.ingredients.culture_additions?.map((item, index) => (
             <tr key={weakKey(item)}>
               <td colSpan={4}>
                 <FancySelect
@@ -411,6 +463,7 @@ const App: React.FC = () => {
                 />
               </td>
               <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
+              <td><button onClick={() => setData(data => deleteCulture(data, index))}>Delete</button></td>
             </tr>
           ))}
 
@@ -437,7 +490,7 @@ const App: React.FC = () => {
         </thead>
 
         <tbody>
-          {recipe.mash?.mash_steps?.map((item) => (
+          {recipe.mash?.mash_steps?.map((item, index) => (
             <>
               {item.type !== 'sparge' ? null : (
                 <tr>
@@ -452,6 +505,10 @@ const App: React.FC = () => {
                 <td><VolumeInput value={item.amount} /></td>
                 <td><TemperatureInput value={item.step_temperature} /></td>
                 <td><TimeInput value={item.step_time} /></td>
+
+                {item.type !== 'temperature' ? null : (
+                  <td><button onClick={() => setData(data => deleteMashStep(data, index))}>Delete</button></td>
+                )}
               </tr>
             </>
           ))}
