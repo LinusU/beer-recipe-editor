@@ -8,7 +8,7 @@
     "test": "ts-standard"
   },
   "dependencies": {
-    "@beerjson/beerjson": "^1.0.1",
+    "@beerjson/beerjson": "^1.0.2",
     "dot-prop-immutable": "^2.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
