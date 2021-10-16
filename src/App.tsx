@@ -1,14 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="@beerjson/beerjson/types/ts/beerjson" />
 
-import dotProp from 'dot-prop-immutable'
 import React, { ChangeEvent, useState } from 'react'
+import { Path, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
 import FancySelect from 'react-select'
 import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
-import weakKey from 'weak-key'
 
-import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, hopAdditions, miscellaneousAdditions } from './data'
+import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous } from './data'
 
 const accentColor = '#FB8B24'
 
@@ -42,227 +41,163 @@ const SingleInputWrapper: React.FC<SingleInputWrapperProps> = ({ children, title
   </HStack>
 )
 
-interface SelectProps {
+interface SelectProps<T> {
   fontSize?: number
+  form: UseFormReturn<T>
+  name: Path<T>
   options: ReadonlyArray<{ name?: string, value: string }>
-  selected?: string
 }
 
-const Select: React.FC<SelectProps> = ({ fontSize, options, selected }) => (
-  <select style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1 }}>
-    {options.map((option) => (
-      <option key={option.value} selected={option.value === selected}>{option.name ?? option.value}</option>
-    ))}
-  </select>
-)
-
-interface TextInputProps {
-  fontSize?: number
-  multiline?: boolean
-  value?: string
-}
-
-const TextInput: React.FC<TextInputProps> = ({ fontSize, multiline, value }) => (
-  (multiline ?? false) ? (
-    <textarea rows={5} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }}>{value}</textarea>
-  ) : (
-    <input style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }} value={value} />
+function Select<T> ({ fontSize, form, name, options }: SelectProps<T>): JSX.Element {
+  return (
+    <select {...form.register(name)} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1 }}>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>{option.name ?? option.value}</option>
+      ))}
+    </select>
   )
-)
+}
 
-interface GravityInputProps {
+interface TextInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.GravityType
+  form: UseFormReturn<T>
+  multiline?: boolean
+  name: Path<T>
 }
 
-const GravityInput: React.FC<GravityInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={gravityUnitOptions} selected={value?.unit} />
-  </>
-)
+function TextInput<T> ({ fontSize, form, multiline, name }: TextInputProps<T>): JSX.Element {
+  return (multiline ?? false) ? (
+    <textarea {...form.register(name)} rows={5} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }} />
+  ) : (
+    <input {...form.register(name)} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }} />
+  )
+}
 
-interface PercentInputProps {
+interface GravityInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.PercentType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const PercentInput: React.FC<PercentInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={[{ value: '%' }]} selected={value?.unit} />
-  </>
-)
+function GravityInput<T> ({ fontSize, form, name }: GravityInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={gravityUnitOptions} />
+    </>
+  )
+}
 
-interface TimeInputProps {
+interface PercentInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.TimeType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const TimeInput: React.FC<TimeInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={timeUnitOptions} selected={value?.unit} />
-  </>
-)
+function PercentInput<T> ({ fontSize, form, name }: PercentInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[{ value: '%' }]} />
+    </>
+  )
+}
 
-interface TemperatureInputProps {
+interface TimeInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.TemperatureType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const TemperatureInput: React.FC<TemperatureInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={temperatureUnitOptions} selected={value?.unit} />
-  </>
-)
+function TimeInput<T> ({ fontSize, form, name }: TimeInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={timeUnitOptions} />
+    </>
+  )
+}
 
-interface UseInputProps {
+interface TemperatureInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.UseType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const UseInput: React.FC<UseInputProps> = ({ fontSize, value }) => (
-  <Select
-    fontSize={fontSize}
-    options={[
-      { name: 'Add to mash', value: 'add_to_mash' },
-      { name: 'Add to boil', value: 'add_to_boil' },
-      { name: 'Add to fermentation', value: 'add_to_fermentation' },
-      { name: 'Add to package', value: 'add_to_package' }
-    ]}
-    selected={value}
-  />
-)
+function TemperatureInput<T> ({ fontSize, form, name }: TemperatureInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={temperatureUnitOptions} />
+    </>
+  )
+}
 
-interface MassOrVolumeInputProps {
+interface UseInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.MassType | BeerJSON.VolumeType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const MassOrVolumeInput: React.FC<MassOrVolumeInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={[...volumeUnitOptions, ...massUnitOptions]} selected={value?.unit} />
-  </>
-)
+function UseInput<T> ({ fontSize, form, name }: UseInputProps<T>): JSX.Element {
+  return (
+    <Select
+      fontSize={fontSize}
+      form={form}
+      name={name}
+      options={[
+        { name: 'Add to mash', value: 'add_to_mash' },
+        { name: 'Add to boil', value: 'add_to_boil' },
+        { name: 'Add to fermentation', value: 'add_to_fermentation' },
+        { name: 'Add to package', value: 'add_to_package' }
+      ]}
+    />
+  )
+}
 
-interface MassOrUnitOrVolumeInputProps {
+interface MassOrVolumeInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.MassType | BeerJSON.UnitType | BeerJSON.VolumeType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const MassOrUnitOrVolumeInput: React.FC<MassOrUnitOrVolumeInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={[...volumeUnitOptions, ...massUnitOptions, ...unitUnitOptions]} selected={value?.unit} />
-  </>
-)
+function MassOrVolumeInput<T> ({ fontSize, form, name }: MassOrVolumeInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[...volumeUnitOptions, ...massUnitOptions]} />
+    </>
+  )
+}
 
-interface VolumeInputProps {
+interface MassOrUnitOrVolumeInputProps<T> {
   fontSize?: number
-  value?: BeerJSON.VolumeType
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-const VolumeInput: React.FC<VolumeInputProps> = ({ fontSize, value }) => (
-  <>
-    <input type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} value={value?.value} />
-    <Select fontSize={fontSize} options={volumeUnitOptions} selected={value?.unit} />
-  </>
-)
-
-function addCulture (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.culture_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.culture_additions]
-  list.push({ name: '', amount: { unit: 'g' } } as any)
-
-  return dotProp.set(input, 'recipes.0.ingredients.culture_additions', list)
+function MassOrUnitOrVolumeInput<T> ({ fontSize, form, name }: MassOrUnitOrVolumeInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[...volumeUnitOptions, ...massUnitOptions, ...unitUnitOptions]} />
+    </>
+  )
 }
 
-function deleteCulture (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.culture_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.culture_additions]
-  list.splice(index, 1)
-
-  return dotProp.set(input, 'recipes.0.ingredients.culture_additions', list)
+interface VolumeInputProps<T> {
+  fontSize?: number
+  form: UseFormReturn<T>
+  name: Path<T>
 }
 
-function addFermentable (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.fermentable_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.fermentable_additions]
-  list.push({ name: '', amount: { unit: 'g' } } as any)
-
-  return dotProp.set(input, 'recipes.0.ingredients.fermentable_additions', list)
-}
-
-function deleteFermentable (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.fermentable_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.fermentable_additions]
-  list.splice(index, 1)
-
-  return dotProp.set(input, 'recipes.0.ingredients.fermentable_additions', list)
-}
-
-function addHop (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.hop_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.hop_additions]
-  list.push({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'g' } } as any)
-
-  return dotProp.set(input, 'recipes.0.ingredients.hop_additions', list)
-}
-
-function deleteHop (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.hop_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.hop_additions]
-  list.splice(index, 1)
-
-  return dotProp.set(input, 'recipes.0.ingredients.hop_additions', list)
-}
-
-function addMashStep (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].mash?.mash_steps == null) return input
-
-  const spargeIndex = input.recipes[0].mash.mash_steps.findIndex(item => item.type === 'sparge')
-  if (spargeIndex == null) return input
-
-  const list = [...input.recipes[0].mash.mash_steps]
-  list.splice(spargeIndex, 0, { type: 'temperature', step_temperature: { unit: 'C' }, step_time: { unit: 'min' } } as any)
-
-  return dotProp.set(input, 'recipes.0.mash.mash_steps', list)
-}
-
-function deleteMashStep (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].mash?.mash_steps == null) return input
-
-  const list = [...input.recipes[0].mash.mash_steps]
-  list.splice(index, 1)
-
-  return dotProp.set(input, 'recipes.0.mash.mash_steps', list)
-}
-
-function addMiscellaneous (input: BeerJSON.BeerJSON | undefined): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.miscellaneous_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.miscellaneous_additions]
-  list.push({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'ml' } } as any)
-
-  return dotProp.set(input, 'recipes.0.ingredients.miscellaneous_additions', list)
-}
-
-function deleteMiscellaneous (input: BeerJSON.BeerJSON | undefined, index: number): BeerJSON.BeerJSON | undefined {
-  if (input?.recipes?.[0].ingredients?.miscellaneous_additions == null) return input
-
-  const list = [...input.recipes[0].ingredients.miscellaneous_additions]
-  list.splice(index, 1)
-
-  return dotProp.set(input, 'recipes.0.ingredients.miscellaneous_additions', list)
+function VolumeInput<T> ({ fontSize, form, name }: VolumeInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={volumeUnitOptions} />
+    </>
+  )
 }
 
 const App: React.FC = () => {
@@ -297,7 +232,17 @@ const App: React.FC = () => {
     return <Error>File doesn't contain exactly one recipe</Error>
   }
 
-  const recipe = data.recipes[0]
+  return <RecipeEditor recipe={data.recipes[0]} />
+}
+
+const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => {
+  const form = useForm<BeerJSON.RecipeType>({ defaultValues: recipe })
+
+  const fermentables = useFieldArray({ control: form.control, name: 'ingredients.fermentable_additions' })
+  const hops = useFieldArray({ control: form.control, name: 'ingredients.hop_additions' })
+  const miscellaneous = useFieldArray({ control: form.control, name: 'ingredients.miscellaneous_additions' })
+  const cultures = useFieldArray({ control: form.control, name: 'ingredients.culture_additions' })
+  const mashSteps = useFieldArray({ control: form.control, name: 'mash.mash_steps' })
 
   return (
     <VStack maxWidth={700} padding={16}>
@@ -305,15 +250,15 @@ const App: React.FC = () => {
       <Text size={24}>Info</Text>
       <Spacer height={16} />
 
-      <SingleInputWrapper title='Name'><TextInput fontSize={20} value={recipe.name} /></SingleInputWrapper>
-      <SingleInputWrapper title='Type'><Select fontSize={20} options={recipeTypeOptions} selected={recipe.type} /></SingleInputWrapper>
-      <SingleInputWrapper title='Author'><TextInput fontSize={20} value={recipe.author} /></SingleInputWrapper>
-      <SingleInputWrapper title='Created'><TextInput fontSize={20} value={recipe.created} /></SingleInputWrapper>
-      <SingleInputWrapper title='Style'><TextInput fontSize={20} value={recipe.style?.name} /></SingleInputWrapper>
-      <SingleInputWrapper title='Batch Size'><VolumeInput fontSize={20} value={recipe.batch_size} /></SingleInputWrapper>
-      <SingleInputWrapper title='Original Gravity'><GravityInput fontSize={20} value={recipe.original_gravity} /></SingleInputWrapper>
-      <SingleInputWrapper title='Final Gravity'><GravityInput fontSize={20} value={recipe.final_gravity} /></SingleInputWrapper>
-      <SingleInputWrapper title='Notes'><TextInput fontSize={20} multiline value={recipe.notes} /></SingleInputWrapper>
+      <SingleInputWrapper title='Name'><TextInput fontSize={20} form={form} name='name' /></SingleInputWrapper>
+      <SingleInputWrapper title='Type'><Select fontSize={20} form={form} name='type' options={recipeTypeOptions} /></SingleInputWrapper>
+      <SingleInputWrapper title='Author'><TextInput fontSize={20} form={form} name='author' /></SingleInputWrapper>
+      <SingleInputWrapper title='Created'><TextInput fontSize={20} form={form} name='created' /></SingleInputWrapper>
+      <SingleInputWrapper title='Style'><TextInput fontSize={20} form={form} name='style.name' /></SingleInputWrapper>
+      <SingleInputWrapper title='Batch Size'><VolumeInput fontSize={20} form={form} name='batch_size' /></SingleInputWrapper>
+      <SingleInputWrapper title='Original Gravity'><GravityInput fontSize={20} form={form} name='original_gravity' /></SingleInputWrapper>
+      <SingleInputWrapper title='Final Gravity'><GravityInput fontSize={20} form={form} name='final_gravity' /></SingleInputWrapper>
+      <SingleInputWrapper title='Notes'><TextInput fontSize={20} form={form} multiline name='notes' /></SingleInputWrapper>
 
       <Spacer height={16} />
       <Text size={24}>Fermentables</Text>
@@ -331,22 +276,29 @@ const App: React.FC = () => {
         </thead>
 
         <tbody>
-          {recipe.ingredients.fermentable_additions.map((item, index) => (
-            <tr key={weakKey(item)}>
+          {fermentables.fields.map((item, index) => (
+            <tr key={item.id}>
               <td colSpan={3}>
                 <FancySelect
+                  defaultValue={formatFermentable(item)}
+                  onChange={(selected) => {
+                    const parsed = selected == null ? null : parseFermentable(selected.value)
+
+                    form.setValue(`ingredients.fermentable_additions.${index}.type`, parsed?.type ?? ('' as any))
+                    form.setValue(`ingredients.fermentable_additions.${index}.name`, parsed?.name ?? '')
+                    form.setValue(`ingredients.fermentable_additions.${index}.producer`, parsed?.producer ?? '')
+                  }}
                   options={fermentableAdditions.map(item => formatFermentable(item))}
-                  value={formatFermentable(item)}
                 />
               </td>
-              <td><HStack><MassOrVolumeInput value={item.amount} /></HStack></td>
-              <td><button onClick={() => setData(data => deleteFermentable(data, index))}>Delete</button></td>
+              <td><HStack><MassOrVolumeInput form={form} name={`ingredients.fermentable_additions.${index}.amount`} /></HStack></td>
+              <td><button onClick={() => fermentables.remove(index)}>Delete</button></td>
             </tr>
           ))}
 
           <tr>
             <td colSpan={4} style={{ textAlign: 'center' }}>
-              <button onClick={() => setData(addFermentable)}>Add fermentable</button>
+              <button onClick={() => fermentables.append({ name: '', amount: { unit: 'g' } } as any)}>Add fermentable</button>
             </td>
           </tr>
         </tbody>
@@ -371,27 +323,32 @@ const App: React.FC = () => {
         </thead>
 
         <tbody>
-          {recipe.ingredients.hop_additions?.map((item, index) => (
-            <tr key={weakKey(item)}>
+          {hops.fields.map((item, index) => (
+            <tr key={item.id}>
               <td style={{ minWidth: 200 }}>
                 <FancySelect
+                  defaultValue={formatHop(item)}
+                  onChange={(selected) => {
+                    const parsed = selected == null ? null : parseHop(selected.value)
+
+                    form.setValue(`ingredients.hop_additions.${index}.name`, parsed?.name ?? '')
+                  }}
                   options={hopAdditions.map(item => formatHop(item))}
-                  value={formatHop(item)}
                 />
               </td>
-              <td><UseInput value={item.timing?.use} /></td>
-              <td><TimeInput value={item.timing?.duration} /></td>
-              <td><MassOrVolumeInput value={item.amount} /></td>
-              <td><PercentInput value={item.alpha_acid} /></td>
-              <td><TextInput value={item.year} /></td>
-              <td><TextInput value={item.origin} /></td>
-              <td><button onClick={() => setData(data => deleteHop(data, index))}>Delete</button></td>
+              <td><UseInput form={form} name={`ingredients.hop_additions.${index}.timing.use`} /></td>
+              <td><TimeInput form={form} name={`ingredients.hop_additions.${index}.timing.duration`} /></td>
+              <td><MassOrVolumeInput form={form} name={`ingredients.hop_additions.${index}.amount`} /></td>
+              <td><PercentInput form={form} name={`ingredients.hop_additions.${index}.alpha_acid`} /></td>
+              <td><TextInput form={form} name={`ingredients.hop_additions.${index}.year`} /></td>
+              <td><TextInput form={form} name={`ingredients.hop_additions.${index}.origin`} /></td>
+              <td><button onClick={() => hops.remove(index)}>Delete</button></td>
             </tr>
           ))}
 
           <tr>
             <td colSpan={7} style={{ textAlign: 'center' }}>
-              <button onClick={() => setData(addHop)}>Add hop</button>
+              <button onClick={() => hops.append({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'g' } } as any)}>Add hop</button>
             </td>
           </tr>
         </tbody>
@@ -414,24 +371,30 @@ const App: React.FC = () => {
         </thead>
 
         <tbody>
-          {recipe.ingredients.miscellaneous_additions?.map((item, index) => (
-            <tr key={weakKey(item)}>
+          {miscellaneous.fields.map((item, index) => (
+            <tr key={item.id}>
               <td colSpan={2} style={{ minWidth: 200 }}>
                 <FancySelect
+                  defaultValue={formatMiscellaneous(item)}
+                  onChange={(selected) => {
+                    const parsed = selected == null ? null : parseMiscellaneous(selected.value)
+
+                    form.setValue(`ingredients.miscellaneous_additions.${index}.type`, parsed?.type ?? ('' as any))
+                    form.setValue(`ingredients.miscellaneous_additions.${index}.name`, parsed?.name ?? '')
+                  }}
                   options={miscellaneousAdditions.map(item => formatMiscellaneous(item))}
-                  value={formatMiscellaneous(item)}
                 />
               </td>
-              <td><UseInput value={item.timing?.use} /></td>
-              <td><TimeInput value={item.timing?.duration} /></td>
-              <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
-              <td><button onClick={() => setData(data => deleteMiscellaneous(data, index))}>Delete</button></td>
+              <td><UseInput form={form} name={`ingredients.miscellaneous_additions.${index}.timing.use`} /></td>
+              <td><TimeInput form={form} name={`ingredients.miscellaneous_additions.${index}.timing.duration`} /></td>
+              <td><MassOrUnitOrVolumeInput form={form} name={`ingredients.miscellaneous_additions.${index}.amount`} /></td>
+              <td><button onClick={() => miscellaneous.remove(index)}>Delete</button></td>
             </tr>
           ))}
 
           <tr>
             <td colSpan={5} style={{ textAlign: 'center' }}>
-              <button onClick={() => setData(addMiscellaneous)}>Add miscellaneous</button>
+              <button onClick={() => miscellaneous.append({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'ml' } } as any)}>Add miscellaneous</button>
             </td>
           </tr>
         </tbody>
@@ -454,22 +417,30 @@ const App: React.FC = () => {
         </thead>
 
         <tbody>
-          {recipe.ingredients.culture_additions?.map((item, index) => (
-            <tr key={weakKey(item)}>
+          {cultures.fields.map((item, index) => (
+            <tr key={item.id}>
               <td colSpan={4}>
                 <FancySelect
+                  defaultValue={formatCulture(item)}
+                  onChange={(selected) => {
+                    const parsed = selected == null ? null : parseCulture(selected.value)
+
+                    form.setValue(`ingredients.culture_additions.${index}.type`, parsed?.type ?? ('' as any))
+                    form.setValue(`ingredients.culture_additions.${index}.name`, parsed?.name ?? '')
+                    form.setValue(`ingredients.culture_additions.${index}.form`, parsed?.form ?? ('' as any))
+                    form.setValue(`ingredients.culture_additions.${index}.producer`, parsed?.producer ?? '')
+                  }}
                   options={cultureAdditions.map(item => formatCulture(item))}
-                  value={formatCulture(item)}
                 />
               </td>
-              <td><MassOrUnitOrVolumeInput value={item.amount} /></td>
-              <td><button onClick={() => setData(data => deleteCulture(data, index))}>Delete</button></td>
+              <td><MassOrUnitOrVolumeInput form={form} name={`ingredients.culture_additions.${index}.amount`} /></td>
+              <td><button onClick={() => cultures.remove(index)}>Delete</button></td>
             </tr>
           ))}
 
           <tr>
             <td colSpan={5} style={{ textAlign: 'center' }}>
-              <button onClick={() => setData(addCulture)}>Add culture</button>
+              <button onClick={() => cultures.append({ name: '', amount: { unit: 'g' } } as any)}>Add culture</button>
             </td>
           </tr>
         </tbody>
@@ -490,24 +461,24 @@ const App: React.FC = () => {
         </thead>
 
         <tbody>
-          {recipe.mash?.mash_steps?.map((item, index) => (
-            <React.Fragment key={weakKey(item)}>
+          {mashSteps.fields.map((item, index) => (
+            <React.Fragment key={item.id}>
               {item.type !== 'sparge' ? null : (
-                <tr>
+                <tr key='add'>
                   <td colSpan={4} style={{ textAlign: 'center' }}>
-                    <button onClick={() => setData(addMashStep)}>Add mash temperature step</button>
+                    <button onClick={() => mashSteps.insert(index, { type: 'temperature', step_temperature: { value: '', unit: 'C' }, step_time: { value: '', unit: 'min' } } as any)}>Add mash temperature step</button>
                   </td>
                 </tr>
               )}
 
               <tr>
                 <td>{item.type}</td>
-                <td><VolumeInput value={item.amount} /></td>
-                <td><TemperatureInput value={item.step_temperature} /></td>
-                <td><TimeInput value={item.step_time} /></td>
+                <td>{item.type === 'temperature' ? null : <VolumeInput form={form} name={`mash.mash_steps.${index}.amount`} />}</td>
+                <td><TemperatureInput form={form} name={`mash.mash_steps.${index}.step_temperature`} /></td>
+                <td><TimeInput form={form} name={`mash.mash_steps.${index}.step_time`} /></td>
 
                 {item.type !== 'temperature' ? null : (
-                  <td><button onClick={() => setData(data => deleteMashStep(data, index))}>Delete</button></td>
+                  <td><button onClick={() => mashSteps.remove(index)}>Delete</button></td>
                 )}
               </tr>
             </React.Fragment>
@@ -517,13 +488,13 @@ const App: React.FC = () => {
             <td>boil</td>
             <td />
             <td />
-            <td><TimeInput value={recipe.boil?.boil_time} /></td>
+            <td><TimeInput form={form} name='boil.boil_time' /></td>
           </tr>
 
           <tr>
             <td>fermentation</td>
             <td />
-            <td><TemperatureInput value={recipe.fermentation?.fermentation_steps?.[0].start_temperature} /></td>
+            <td><TemperatureInput form={form} name='fermentation.fermentation_steps.0.start_temperature' /></td>
             <td />
           </tr>
         </tbody>
