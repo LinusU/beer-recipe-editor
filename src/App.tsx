@@ -491,7 +491,7 @@ const App: React.FC = () => {
 
         <tbody>
           {recipe.mash?.mash_steps?.map((item, index) => (
-            <>
+            <React.Fragment key={weakKey(item)}>
               {item.type !== 'sparge' ? null : (
                 <tr>
                   <td colSpan={4} style={{ textAlign: 'center' }}>
@@ -500,7 +500,7 @@ const App: React.FC = () => {
                 </tr>
               )}
 
-              <tr key={weakKey(item)}>
+              <tr>
                 <td>{item.type}</td>
                 <td><VolumeInput value={item.amount} /></td>
                 <td><TemperatureInput value={item.step_temperature} /></td>
@@ -510,7 +510,7 @@ const App: React.FC = () => {
                   <td><button onClick={() => setData(data => deleteMashStep(data, index))}>Delete</button></td>
                 )}
               </tr>
-            </>
+            </React.Fragment>
           ))}
 
           <tr>
