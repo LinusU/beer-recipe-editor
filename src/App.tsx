@@ -7,7 +7,7 @@ import FancySelect from 'react-select'
 import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 
-import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous } from './data'
+import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, styles } from './data'
 
 const accentColor = '#FB8B24'
 
@@ -254,7 +254,22 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
       <SingleInputWrapper title='Type'><Select fontSize={20} form={form} name='type' options={recipeTypeOptions} /></SingleInputWrapper>
       <SingleInputWrapper title='Author'><TextInput fontSize={20} form={form} name='author' /></SingleInputWrapper>
       <SingleInputWrapper title='Created'><TextInput fontSize={20} form={form} name='created' /></SingleInputWrapper>
-      <SingleInputWrapper title='Style'><TextInput fontSize={20} form={form} name='style.name' /></SingleInputWrapper>
+      <SingleInputWrapper title='Style'>
+        <FancySelect
+          defaultValue={formatStyle(recipe.style ?? { style_guide: 'BJCP 2015', type: 'beer', name: '' })}
+          onChange={(selected) => {
+            const parsed = selected == null ? null : parseStyle(selected.value)
+
+            form.setValue('style.category_number', parsed?.category_number ?? undefined)
+            form.setValue('style.name', parsed?.name ?? '')
+            form.setValue('style.style_guide', parsed?.style_guide ?? '')
+            form.setValue('style.style_letter', parsed?.style_letter ?? '')
+            form.setValue('style.type', parsed?.type ?? 'beer')
+          }}
+          options={styles.map(item => formatStyle(item))}
+          styles={{ container: base => ({ flexGrow: 1, ...base }) }}
+        />
+      </SingleInputWrapper>
       <SingleInputWrapper title='Batch Size'><VolumeInput fontSize={20} form={form} name='batch_size' /></SingleInputWrapper>
       <SingleInputWrapper title='Original Gravity'><GravityInput fontSize={20} form={form} name='original_gravity' /></SingleInputWrapper>
       <SingleInputWrapper title='Final Gravity'><GravityInput fontSize={20} form={form} name='final_gravity' /></SingleInputWrapper>
