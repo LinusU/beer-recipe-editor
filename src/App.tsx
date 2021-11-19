@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="@beerjson/beerjson/types/ts/beerjson" />
 
+import slugify from '@sindresorhus/slugify'
 import React, { ChangeEvent, useState } from 'react'
 import { Path, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
 import FancySelect from 'react-select'
@@ -82,7 +83,7 @@ interface GravityInputProps<T> {
 function GravityInput<T> ({ fontSize, form, name }: GravityInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={gravityUnitOptions} />
     </>
   )
@@ -97,7 +98,7 @@ interface PercentInputProps<T> {
 function PercentInput<T> ({ fontSize, form, name }: PercentInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[{ value: '%' }]} />
     </>
   )
@@ -112,7 +113,7 @@ interface TimeInputProps<T> {
 function TimeInput<T> ({ fontSize, form, name }: TimeInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={timeUnitOptions} />
     </>
   )
@@ -127,7 +128,7 @@ interface TemperatureInputProps<T> {
 function TemperatureInput<T> ({ fontSize, form, name }: TemperatureInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={temperatureUnitOptions} />
     </>
   )
@@ -164,7 +165,7 @@ interface MassOrVolumeInputProps<T> {
 function MassOrVolumeInput<T> ({ fontSize, form, name }: MassOrVolumeInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[...volumeUnitOptions, ...massUnitOptions]} />
     </>
   )
@@ -179,7 +180,7 @@ interface MassOrUnitOrVolumeInputProps<T> {
 function MassOrUnitOrVolumeInput<T> ({ fontSize, form, name }: MassOrUnitOrVolumeInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[...volumeUnitOptions, ...massUnitOptions, ...unitUnitOptions]} />
     </>
   )
@@ -194,7 +195,7 @@ interface VolumeInputProps<T> {
 function VolumeInput<T> ({ fontSize, form, name }: VolumeInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any)} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={volumeUnitOptions} />
     </>
   )
@@ -243,6 +244,23 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
   const miscellaneous = useFieldArray({ control: form.control, name: 'ingredients.miscellaneous_additions' })
   const cultures = useFieldArray({ control: form.control, name: 'ingredients.culture_additions' })
   const mashSteps = useFieldArray({ control: form.control, name: 'mash.mash_steps' })
+
+  const handleSave = (): void => {
+    const recipe = form.getValues()
+    let data = JSON.stringify({ beerjson: { version: 1, recipes: [recipe] } }, null, 2) + '\n'
+
+    // 🙈
+    data = data.replace(/("unit": "sg",\s+"value": 1.\d\d)(\s)/gm, (_, head: string, tail: string) => `${head}0${tail}`)
+
+    const a = document.createElement('a')
+
+    a.download = `${slugify(recipe.name)}.json`
+    a.href = `data:application/json;charset=utf-8,${encodeURIComponent(data)}`
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 
   return (
     <VStack maxWidth={700} padding={16}>
@@ -514,6 +532,8 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
           </tr>
         </tbody>
       </table>
+
+      <button onClick={handleSave}>Save</button>
     </VStack>
   )
 }
