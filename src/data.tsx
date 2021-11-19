@@ -20,6 +20,11 @@ export function formatFermentable (input: Fermentable): { label: string, value: 
   }
 }
 
+export function parseFermentable (input: string): Fermentable {
+  const [type, name, producer] = input.split('~')
+  return { type: type as any, name, producer: producer === '' ? undefined : producer }
+}
+
 export const fermentableAdditions: Fermentable[] = [
   { type: 'fruit', name: 'Blackberries' },
   { type: 'fruit', name: 'Passion fruit purée' },
@@ -70,6 +75,11 @@ export function formatHop (input: Hop): { label: string, value: string } {
   }
 }
 
+export function parseHop (input: string): Hop {
+  const [name] = input.split('~')
+  return { name }
+}
+
 export const hopAdditions: Hop[] = [
   { name: 'Amarillo' },
   { name: 'Azacca' },
@@ -113,6 +123,11 @@ export function formatMiscellaneous (input: BeerJSON.MiscellaneousBase): { label
   }
 }
 
+export function parseMiscellaneous (input: string): BeerJSON.MiscellaneousBase {
+  const [type, name] = input.split('~')
+  return { type: type as any, name }
+}
+
 export const miscellaneousAdditions: BeerJSON.MiscellaneousBase[] = [
   { type: 'fining', name: 'Gelatin Sheet' },
   { type: 'fining', name: 'Protafloc' },
@@ -138,6 +153,11 @@ export function formatCulture (input: BeerJSON.CultureBase): { label: string, va
     label: `${icon} ${input.name}${input.producer == null ? '' : ` (${input.producer})`}`,
     value: `${input.type}~${input.form}~${input.name}~${input.producer ?? ''}`
   }
+}
+
+export function parseCulture (input: string): BeerJSON.CultureBase {
+  const [type, form, name, producer] = input.split('~')
+  return { type: type as any, name, form: form as any, producer: producer === '' ? undefined : producer }
 }
 
 export const cultureAdditions: BeerJSON.CultureBase[] = [
