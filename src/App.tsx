@@ -8,7 +8,7 @@ import FancySelect from 'react-select'
 import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 
-import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, styles } from './data'
+import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, recipeTemplate, styles } from './data'
 import { summarizeFermentables, summarizeHops } from './util'
 
 const accentColor = '#FB8B24'
@@ -219,10 +219,16 @@ const App: React.FC = () => {
 
   if (data == null) {
     return (
-      <div>
-        Load file:
-        <input type='file' onChange={handleChange} />
-      </div>
+      <VStack padding={16}>
+        <HStack padding={16}>
+          Load file:
+          <input type='file' onChange={handleChange} />
+        </HStack>
+
+        <HStack padding={16}>
+          New file: <button onClick={() => setData({ version: 1, recipes: [recipeTemplate] })}>Create Recipe</button>
+        </HStack>
+      </VStack>
     )
   }
 

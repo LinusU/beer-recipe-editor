@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="@beerjson/beerjson/types/ts/beerjson" />
 
-import unreachable from "ts-unreachable"
+import unreachable from 'ts-unreachable'
 
 type Style = Pick<BeerJSON.StyleBase, 'name' | 'category_number' | 'style_letter' | 'style_guide' | 'type'>
 
-export function formatStyle(style: Style): { label: string, value: string } {
+export function formatStyle (style: Style): { label: string, value: string } {
   if (style.type !== 'beer' || style.style_guide !== 'BJCP 2015') {
     return { label: 'Unknown', value: '' }
   }
@@ -365,3 +365,58 @@ export const cultureAdditions: BeerJSON.CultureBase[] = [
   { type: 'ale', form: 'dry', name: 'Safale WB-06', producer: 'Fermentis' },
   { type: 'champagne', form: 'dry', name: 'EC-1118', producer: 'Lalvin' }
 ]
+
+export const recipeTemplate = {
+  name: '',
+  type: 'all grain',
+  author: 'Linus Unnebäck',
+  created: `${new Date().getFullYear()}-00-00`,
+  batch_size: { unit: 'l', value: 20 },
+  style: {
+    style_guide: 'BJCP 2015',
+    type: 'beer',
+    category_number: 0,
+    style_letter: 'A',
+    name: ''
+  },
+  original_gravity: { unit: 'sg', value: 1.000 },
+  final_gravity: { unit: 'sg', value: 1.000 },
+  packaging: {
+    name: 'Cornelius keg',
+    packaged_volume: { unit: 'l', value: 0 }
+  },
+  notes: 'Inspiration: ----- recept ifrån boken ----, ISBN XXX',
+  ingredients: {
+    fermentable_additions: [],
+    hop_additions: [],
+    miscellaneous_additions: [
+      {
+        name: 'Protafloc',
+        type: 'fining',
+        timing: { duration: { unit: 'min', value: 15 }, use: 'add_to_boil' },
+        amount: { unit: 'ml', value: 1 }
+      }
+    ],
+    culture_additions: []
+  },
+  mash: {
+    mash_steps: [
+      {
+        type: 'infusion',
+        amount: { unit: 'l', value: 16 },
+        step_temperature: { unit: 'C', value: 67 },
+        step_time: { unit: 'min', value: 60 }
+      },
+      {
+        type: 'sparge',
+        amount: { unit: 'l', value: 12 },
+        step_temperature: { unit: 'C', value: 76 },
+        step_time: { unit: 'min', value: 10 }
+      }
+    ]
+  },
+  boil: { boil_time: { unit: 'min', value: 60 } },
+  fermentation: {
+    fermentation_steps: [{ start_temperature: { unit: 'C', value: 20, free_rise: true } }]
+  }
+}
