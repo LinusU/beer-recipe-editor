@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="@beerjson/beerjson/types/ts/beerjson" />
 
+import unreachable from "ts-unreachable"
+
 type Style = Pick<BeerJSON.StyleBase, 'name' | 'category_number' | 'style_letter' | 'style_guide' | 'type'>
 
 export function formatStyle(style: Style): { label: string, value: string } {
@@ -214,45 +216,85 @@ export const fermentableAdditions: Fermentable[] = [
   { type: 'sugar', name: 'Caster sugar', producer: 'Dansukker' }
 ]
 
-type Hop = Pick<BeerJSON.HopVarietyBase, 'name'>
+type Hop = Pick<BeerJSON.HopVarietyBase, 'name' | 'form' | 'alpha_acid' | 'origin' | 'year'>
 
 export function formatHop (input: Hop): { label: string, value: string } {
+  if (input.alpha_acid != null && input.alpha_acid.unit !== '%') unreachable(input.alpha_acid.unit)
+
+  let icon
+  switch (input.form) {
+    case 'leaf': icon = '🌱'; break
+    case 'pellet': icon = '🥬'; break
+    default: icon = '❓'
+  }
+
+  switch (input.origin) {
+    case 'Czech': icon += '🇨🇿'; break
+    case 'England': icon += '🇬🇧'; break
+    case 'Germany': icon += '🇩🇪'; break
+    case 'New Zealand': icon += '🇳🇿'; break
+    case 'Slovenia': icon += '🇸🇮'; break
+    case 'USA': icon += '🇺🇸'; break
+    default: icon += '🌎'
+  }
+
+  const extra = [
+    ...(input.alpha_acid == null ? [] : [`${input.alpha_acid.value}%`]),
+    ...(input.year == null ? [] : [`${input.year}`])
+  ]
+
   return {
-    label: `🥬 ${input.name}`,
-    value: input.name
+    label: `${icon} ${input.name}${extra.length === 0 ? '' : ` (${extra.join(', ')})`}`,
+    value: `${input.name}~${input.form ?? ''}~${input.alpha_acid?.value ?? ''}~${input.origin ?? ''}~${input.year ?? ''}`
   }
 }
 
 export function parseHop (input: string): Hop {
-  const [name] = input.split('~')
-  return { name }
+  const [name, form, alpha, origin, year] = input.split('~')
+  return { name, form: form === '' ? undefined : (form as Hop['form']), alpha_acid: alpha === '' ? (undefined as any) : { unit: '%', value: Number.parseFloat(alpha) }, origin: origin === '' ? undefined : origin, year: year === '' ? undefined : year }
 }
 
 export const hopAdditions: Hop[] = [
-  { name: 'Amarillo' },
-  { name: 'Azacca' },
-  { name: 'Bramling Cross' },
-  { name: 'Cascade' },
-  { name: 'Centennial' },
-  { name: 'Challenger' },
-  { name: 'Chinook' },
-  { name: 'Citra' },
-  { name: 'Columbus' },
-  { name: 'East Kent Golding' },
-  { name: 'First Gold' },
-  { name: 'Fuggle' },
-  { name: 'Galaxy' },
-  { name: 'Hallertauer Mittelfrüh' },
-  { name: 'Hersbrucker' },
-  { name: 'Magnum' },
-  { name: 'Mosaic' },
-  { name: 'Pacifica' },
-  { name: 'Perle' },
-  { name: 'Saaz' },
-  { name: 'Simcoe' },
-  { name: 'Styrian Golding Bobek' },
-  { name: 'Target' },
-  { name: 'Tettnanger' }
+  { name: 'Amarillo', form: 'pellet', alpha_acid: { unit: '%', value: 8.7 }, origin: 'USA', year: '2020' },
+  { name: 'Amarillo', form: 'pellet', alpha_acid: { unit: '%', value: 8.4 }, origin: 'USA', year: '2019' },
+  { name: 'Azacca', form: 'pellet', alpha_acid: { unit: '%', value: 10.6 }, origin: 'USA', year: '2020' },
+  { name: 'Bramling Cross', form: 'pellet', alpha_acid: { unit: '%', value: 6.5 }, origin: 'England', year: '2020' },
+  { name: 'Cascade', form: 'pellet', alpha_acid: { unit: '%', value: 5.5 }, origin: 'USA', year: '2020' },
+  { name: 'Cascade', form: 'pellet', alpha_acid: { unit: '%', value: 6.7 }, origin: 'USA', year: '2019' },
+  { name: 'Centennial', form: 'pellet', alpha_acid: { unit: '%', value: 9 }, origin: 'USA', year: '2020' },
+  { name: 'Centennial', form: 'pellet', alpha_acid: { unit: '%', value: 9.5 }, origin: 'USA', year: '2019' },
+  { name: 'Challenger', form: 'pellet', alpha_acid: { unit: '%', value: 6.1 }, origin: 'England', year: '2020' },
+  { name: 'Challenger', form: 'pellet', alpha_acid: { unit: '%', value: 7.6 }, origin: 'England', year: '2019' },
+  { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 12.4 }, origin: 'USA', year: '2020' },
+  { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 11.2 }, origin: 'USA', year: '2019' },
+  { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 13.8 }, origin: 'USA', year: '2020' },
+  { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 13.7 }, origin: 'USA', year: '2019' },
+  { name: 'Columbus', form: 'pellet', alpha_acid: { unit: '%', value: 14.9 }, origin: 'USA', year: '2020' },
+  { name: 'Columbus', form: 'pellet', alpha_acid: { unit: '%', value: 15 }, origin: 'USA', year: '2019' },
+  { name: 'East Kent Golding', form: 'pellet', alpha_acid: { unit: '%', value: 6 }, origin: 'England', year: '2020' },
+  { name: 'East Kent Golding', form: 'pellet', alpha_acid: { unit: '%', value: 5 }, origin: 'England', year: '2019' },
+  { name: 'First Gold', form: 'pellet', alpha_acid: { unit: '%', value: 8 }, origin: 'England', year: '2020' },
+  { name: 'Fuggle', form: 'pellet', alpha_acid: { unit: '%', value: 4.4 }, origin: 'England', year: '2020' },
+  { name: 'Galaxy', form: 'pellet', alpha_acid: { unit: '%', value: 16.6 }, origin: 'USA', year: '2020' },
+  { name: 'Hallertauer Mittelfrüh', form: 'pellet', alpha_acid: { unit: '%', value: 4 }, origin: 'Germany', year: '2020' },
+  { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 3 }, origin: 'Germany', year: '2020' },
+  { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 2.7 }, origin: 'Germany', year: '2019' },
+  { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 11.9 }, origin: 'Germany', year: '2020' },
+  { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 10.7 }, origin: 'Germany', year: '2019' },
+  { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11 }, origin: 'USA', year: '2020' },
+  { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2019' },
+  { name: 'Pacifica', form: 'pellet', alpha_acid: { unit: '%', value: 3.9 }, origin: 'New Zealand', year: '2020' },
+  { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 5.4 }, origin: 'Germany', year: '2020' },
+  { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 6.6 }, origin: 'Germany', year: '2019' },
+  { name: 'Saaz', form: 'pellet', alpha_acid: { unit: '%', value: 3.1 }, origin: 'Czech', year: '2020' },
+  { name: 'Saaz', form: 'pellet', alpha_acid: { unit: '%', value: 3.2 }, origin: 'Czech', year: '2019' },
+  { name: 'Simcoe', form: 'pellet', alpha_acid: { unit: '%', value: 12.8 }, origin: 'USA', year: '2020' },
+  { name: 'Simcoe', form: 'pellet', alpha_acid: { unit: '%', value: 13.3 }, origin: 'USA', year: '2019' },
+  { name: 'Styrian Golding Bobek', form: 'pellet', alpha_acid: { unit: '%', value: 3.8 }, origin: 'Slovenia', year: '2020' },
+  { name: 'Styrian Golding Bobek', form: 'pellet', alpha_acid: { unit: '%', value: 3.5 }, origin: 'Slovenia', year: '2019' },
+  { name: 'Target', form: 'pellet', alpha_acid: { unit: '%', value: 9.2 }, origin: 'England', year: '2020' },
+  { name: 'Tettnanger', form: 'pellet', alpha_acid: { unit: '%', value: 3.8 }, origin: 'Germany', year: '2020' },
+  { name: 'Tettnanger', form: 'pellet', alpha_acid: { unit: '%', value: 3.7 }, origin: 'Germany', year: '2019' }
 ]
 
 export function formatMiscellaneous (input: BeerJSON.MiscellaneousBase): { label: string, value: string } {

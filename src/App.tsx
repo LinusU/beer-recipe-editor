@@ -360,9 +360,6 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
             <th>timing - use</th>
             <th>timing - duration</th>
             <th>amount</th>
-            <th>alpha acid</th>
-            <th>year</th>
-            <th>origin</th>
             <th />
           </tr>
         </thead>
@@ -370,13 +367,18 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
         <tbody>
           {hops.fields.map((item, index) => (
             <tr key={item.id}>
-              <td style={{ minWidth: 200 }}>
+              <td style={{ minWidth: 300 }}>
                 <FancySelect
                   defaultValue={formatHop(item)}
                   onChange={(selected) => {
                     const parsed = selected == null ? null : parseHop(selected.value)
 
                     form.setValue(`ingredients.hop_additions.${index}.name`, parsed?.name ?? '')
+                    form.setValue(`ingredients.hop_additions.${index}.form`, parsed?.form ?? ('' as any))
+                    form.setValue(`ingredients.hop_additions.${index}.alpha_acid.unit`, parsed?.alpha_acid?.unit ?? '%')
+                    form.setValue(`ingredients.hop_additions.${index}.alpha_acid.value`, parsed?.alpha_acid?.value ?? ('' as any))
+                    form.setValue(`ingredients.hop_additions.${index}.origin`, parsed?.origin ?? '')
+                    form.setValue(`ingredients.hop_additions.${index}.year`, parsed?.year ?? '')
                   }}
                   options={hopAdditions.map(item => formatHop(item))}
                 />
@@ -384,15 +386,12 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
               <td><UseInput form={form} name={`ingredients.hop_additions.${index}.timing.use`} /></td>
               <td><TimeInput form={form} name={`ingredients.hop_additions.${index}.timing.duration`} /></td>
               <td><MassOrVolumeInput form={form} name={`ingredients.hop_additions.${index}.amount`} /></td>
-              <td><PercentInput form={form} name={`ingredients.hop_additions.${index}.alpha_acid`} /></td>
-              <td><TextInput form={form} name={`ingredients.hop_additions.${index}.year`} /></td>
-              <td><TextInput form={form} name={`ingredients.hop_additions.${index}.origin`} /></td>
               <td><button onClick={() => hops.remove(index)}>Delete</button></td>
             </tr>
           ))}
 
           <tr>
-            <td colSpan={7} style={{ textAlign: 'center' }}>
+            <td colSpan={5} style={{ textAlign: 'center' }}>
               <button onClick={() => hops.append({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'g' } } as any)}>Add hop</button>
             </td>
           </tr>
