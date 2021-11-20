@@ -9,6 +9,7 @@ import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 
 import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, styles } from './data'
+import { summarizeFermentables } from './util'
 
 const accentColor = '#FB8B24'
 
@@ -245,6 +246,14 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
   const cultures = useFieldArray({ control: form.control, name: 'ingredients.culture_additions' })
   const mashSteps = useFieldArray({ control: form.control, name: 'mash.mash_steps' })
 
+  const [fermentablesSummary, setFermentablesSummary] = useState('')
+
+  form.watch((values, info) => {
+    if (info.name?.startsWith('ingredients.fermentable_additions') ?? false) {
+      setFermentablesSummary(summarizeFermentables(values?.ingredients?.fermentable_additions as any ?? []))
+    }
+  })
+
   const handleSave = (): void => {
     const recipe = form.getValues()
     let data = JSON.stringify({ beerjson: { version: 1, recipes: [recipe] } }, null, 2) + '\n'
@@ -330,8 +339,11 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
           ))}
 
           <tr>
-            <td colSpan={4} style={{ textAlign: 'center' }}>
+            <td colSpan={3} style={{ textAlign: 'center' }}>
               <button onClick={() => fermentables.append({ name: '', amount: { unit: 'g' } } as any)}>Add fermentable</button>
+            </td>
+            <td colSpan={2}>
+              {fermentablesSummary}
             </td>
           </tr>
         </tbody>
