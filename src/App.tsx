@@ -9,7 +9,7 @@ import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 
 import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, styles } from './data'
-import { summarizeFermentables } from './util'
+import { summarizeFermentables, summarizeHops } from './util'
 
 const accentColor = '#FB8B24'
 
@@ -247,10 +247,15 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
   const mashSteps = useFieldArray({ control: form.control, name: 'mash.mash_steps' })
 
   const [fermentablesSummary, setFermentablesSummary] = useState('')
+  const [hopsSummary, setHopsSummary] = useState('')
 
   form.watch((values, info) => {
     if (info.name?.startsWith('ingredients.fermentable_additions') ?? false) {
       setFermentablesSummary(summarizeFermentables(values?.ingredients?.fermentable_additions as any ?? []))
+    }
+
+    if (info.name?.startsWith('ingredients.hop_additions') ?? false) {
+      setHopsSummary(summarizeHops(values?.ingredients?.hop_additions as any ?? [], { batchSize: values?.batch_size as any, originalGravity: values?.original_gravity as any }))
     }
   })
 
@@ -391,8 +396,11 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
           ))}
 
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center' }}>
               <button onClick={() => hops.append({ name: '', timing: { duration: { unit: 'min' }, use: 'add_to_boil' }, amount: { unit: 'g' } } as any)}>Add hop</button>
+            </td>
+            <td colSpan={3}>
+              {hopsSummary}
             </td>
           </tr>
         </tbody>

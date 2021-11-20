@@ -34,6 +34,34 @@ function normalizeAmount (amount: BeerJSON.MassType | BeerJSON.VolumeType): Beer
 }
 
 /**
+ * Normalize gravity units to specific gravity.
+ */
+function normalizeGravity (gravity: BeerJSON.GravityType): BeerJSON.GravityType {
+  switch (gravity.unit) {
+    case 'sg': return { unit: 'sg', value: gravity.value }
+    // Ref: https://www.brewersfriend.com/plato-to-sg-conversion-chart/
+    case 'plato': return { unit: 'sg', value: 1 + (gravity.value / (258.6 - ((gravity.value / 258.2) * 227.1))) }
+    // Ref: https://www.vinolab.hr/calculator/gravity-density-sugar-conversions-en19
+    case 'brix': return { unit: 'sg', value: (0.00000005785037196 * Math.pow(gravity.value, 3)) + (0.00001261831344 * Math.pow(gravity.value, 2)) + (0.003873042366 * gravity.value) + 0.9999994636 }
+    default: unreachable(gravity.unit)
+  }
+}
+
+/**
+ * Normalize time units to minutes.
+ */
+function normalizeTime (time: BeerJSON.TimeType): BeerJSON.TimeType {
+  switch (time.unit) {
+    case 'sec': return { unit: 'min', value: time.value / 60 }
+    case 'min': return { unit: 'min', value: time.value }
+    case 'hr': return { unit: 'min', value: time.value * 60 }
+    case 'day': return { unit: 'min', value: time.value * 1440 }
+    case 'week': return { unit: 'min', value: time.value * 10080 }
+    default: unreachable(time.unit)
+  }
+}
+
+/**
  * @returns a short string summary of the fermentables.
  */
 export function summarizeFermentables (input: BeerJSON.FermentableAdditionType[]): string {
@@ -67,4 +95,40 @@ export function summarizeFermentables (input: BeerJSON.FermentableAdditionType[]
   }
 
   return result.join(', ')
+}
+
+interface HopsMetadata {
+  batchSize?: BeerJSON.VolumeType
+  originalGravity?: BeerJSON.GravityType
+}
+
+/**
+ * @returns a short string summary of the hops.
+ */
+export function summarizeHops (input: BeerJSON.HopAdditionType[], { batchSize, originalGravity }: HopsMetadata): string {
+  if (batchSize == null || originalGravity == null) return ''
+
+  const batchSizeLiter = normalizeAmount(batchSize).value / 1000
+  const originalGravitySG = normalizeGravity(originalGravity).value
+
+  let ibu = 0
+  for (const hop of input) {
+    if (!Number.isFinite(hop.amount.value)) continue
+    if (hop.alpha_acid.unit !== '%') unreachable(hop.alpha_acid.unit)
+    if (hop.timing?.duration == null) continue
+    if (hop.timing.use !== 'add_to_boil') continue
+
+    const amount = normalizeAmount(hop.amount)
+    const duration = normalizeTime(hop.timing.duration)
+
+    // Ref: http://www.realbeer.com/hops/research.html
+    const addedAlphaAcids = ((hop.alpha_acid.value / 100) * amount.value * 1000) / batchSizeLiter
+    const bignessFactor = 1.65 * Math.pow(0.000125, originalGravitySG - 1)
+    const boilTimeFactor = (1 - Math.exp(-0.04 * duration.value)) / 4.15
+    const alphaAcidUtilization = bignessFactor * boilTimeFactor * (hop.form === 'pellet' ? 1.1 : 1)
+
+    ibu += alphaAcidUtilization * addedAlphaAcids
+  }
+
+  return `Post boil IBU: ${ibu.toFixed(2)}`
 }
