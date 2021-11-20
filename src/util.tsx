@@ -37,7 +37,7 @@ function normalizeAmount (amount: BeerJSON.MassType | BeerJSON.VolumeType): Beer
  * @returns a short string summary of the fermentables.
  */
 export function summarizeFermentables (input: BeerJSON.FermentableAdditionType[]): string {
-  const foo: Record<string, number> = {}
+  const summary: Record<string, number> = {}
 
   for (const fermentable of input) {
     if (!Number.isFinite(fermentable.amount.value)) continue
@@ -45,22 +45,22 @@ export function summarizeFermentables (input: BeerJSON.FermentableAdditionType[]
     const amount = normalizeAmount(fermentable.amount)
     const key = `${amount.unit}~${fermentable.type}`
 
-    foo[key] = (foo[key] ?? 0) + amount.value
+    summary[key] = (summary[key] ?? 0) + amount.value
   }
 
-  const keys = Object.keys(foo)
+  const keys = Object.keys(summary)
 
   if (keys.length === 0) {
     return ''
   }
 
   if (keys.length === 1) {
-    return `${foo[keys[0]].toFixed(0)}${keys[0].split('~')[0]}`
+    return `${summary[keys[0]].toFixed(0)}${keys[0].split('~')[0]}`
   }
 
   const result = []
   for (const key of keys) {
-    const amount = foo[key]
+    const amount = summary[key]
     const [unit, type] = key.split('~')
 
     result.push(`${amount.toFixed(0)}${unit} ${type}`)
