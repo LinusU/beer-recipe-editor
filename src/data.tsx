@@ -99,6 +99,7 @@ export const styles: Style[] = [
   { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: Belgian IPA' },
   { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: Black IPA' },
   { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: Brown IPA' },
+  { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: New England IPA' },
   { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: Red IPA' },
   { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: Rye IPA' },
   { style_guide: 'BJCP 2015', type: 'beer', category_number: 21, style_letter: 'B', name: 'Specialty IPA: White IPA' },
@@ -183,15 +184,20 @@ export const fermentableAdditions: Fermentable[] = [
   { type: 'grain', name: 'Aromatic Malt', producer: 'Dingemans' },
   { type: 'grain', name: 'Beech Smoked Barley Malt', producer: 'Weyermann' },
   { type: 'grain', name: 'Biscuit Malt', producer: 'Dingemans' },
+  { type: 'grain', name: 'Brown Malt', producer: 'Crisp' },
+  { type: 'grain', name: 'Caraaroma', producer: 'Weyermann' },
   { type: 'grain', name: 'Carabelge', producer: 'Weyermann' },
   { type: 'grain', name: 'Carabohemian', producer: 'Weyermann' },
+  { type: 'grain', name: 'Carafa Special 1', producer: 'Weyermann' },
   { type: 'grain', name: 'Carafa Special 3', producer: 'Weyermann' },
   { type: 'grain', name: 'Carahell', producer: 'Weyermann' },
   { type: 'grain', name: 'Caramünch 1', producer: 'Weyermann' },
+  { type: 'grain', name: 'Caramünch 3', producer: 'Weyermann' },
   { type: 'grain', name: 'Carapils', producer: 'Weyermann' },
   { type: 'grain', name: 'Carawheat', producer: 'Weyermann' },
   { type: 'grain', name: 'Chocolate Malt', producer: 'Crisp' },
   { type: 'grain', name: 'Crystal 150', producer: 'Crisp' },
+  { type: 'grain', name: 'Crystal 240', producer: 'Crisp' },
   { type: 'grain', name: 'Flaked Barley', producer: 'Stora Hällsta' },
   { type: 'grain', name: 'Flaked Oats', producer: 'AXA' },
   { type: 'grain', name: 'Golden Promise Malt', producer: 'Thomas Fawcett' },
@@ -273,6 +279,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Columbus', form: 'pellet', alpha_acid: { unit: '%', value: 15 }, origin: 'USA', year: '2019' },
   { name: 'East Kent Golding', form: 'pellet', alpha_acid: { unit: '%', value: 6 }, origin: 'England', year: '2020' },
   { name: 'East Kent Golding', form: 'pellet', alpha_acid: { unit: '%', value: 5 }, origin: 'England', year: '2019' },
+  { name: 'Ekuanot', form: 'pellet', alpha_acid: { unit: '%', value: 14 }, origin: 'USA', year: '2020' },
   { name: 'First Gold', form: 'pellet', alpha_acid: { unit: '%', value: 8 }, origin: 'England', year: '2020' },
   { name: 'Fuggle', form: 'pellet', alpha_acid: { unit: '%', value: 4.4 }, origin: 'England', year: '2020' },
   { name: 'Galaxy', form: 'pellet', alpha_acid: { unit: '%', value: 16.6 }, origin: 'USA', year: '2020' },
@@ -283,6 +290,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 10.7 }, origin: 'Germany', year: '2019' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11 }, origin: 'USA', year: '2020' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2019' },
+  { name: 'Motueka', form: 'pellet', alpha_acid: { unit: '%', value: 7.2 }, origin: 'New Zealand', year: '2020' },
   { name: 'Pacifica', form: 'pellet', alpha_acid: { unit: '%', value: 3.9 }, origin: 'New Zealand', year: '2020' },
   { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 5.4 }, origin: 'Germany', year: '2020' },
   { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 6.6 }, origin: 'Germany', year: '2019' },
@@ -322,7 +330,10 @@ export const miscellaneousAdditions: BeerJSON.MiscellaneousBase[] = [
   { type: 'fining', name: 'Gelatin Sheet' },
   { type: 'fining', name: 'Protafloc' },
   { type: 'spice', name: 'Bitter orange peel' },
-  { type: 'spice', name: 'Ground coriander seed' }
+  { type: 'spice', name: 'Cinnamon Stick' },
+  { type: 'spice', name: 'Ginger' },
+  { type: 'spice', name: 'Ground coriander seed' },
+  { type: 'spice', name: 'Vanilla pod' }
 ]
 
 export function formatCulture (input: BeerJSON.CultureBase): { label: string, value: string } {
@@ -330,6 +341,7 @@ export function formatCulture (input: BeerJSON.CultureBase): { label: string, va
   switch (input.type) {
     case 'ale': icon = '🍺'; break
     case 'champagne': icon = '🍾'; break
+    case 'lager': icon = '🍻'; break
     default: icon = '❓'
   }
 
@@ -363,7 +375,8 @@ export const cultureAdditions: BeerJSON.CultureBase[] = [
   { type: 'ale', form: 'dry', name: 'Safale T-58', producer: 'Fermentis' },
   { type: 'ale', form: 'dry', name: 'Safale US-05', producer: 'Fermentis' },
   { type: 'ale', form: 'dry', name: 'Safale WB-06', producer: 'Fermentis' },
-  { type: 'champagne', form: 'dry', name: 'EC-1118', producer: 'Lalvin' }
+  { type: 'champagne', form: 'dry', name: 'EC-1118', producer: 'Lalvin' },
+  { type: 'lager', form: 'dry', name: 'Saflager W-34/70', producer: 'Fermentis' }
 ]
 
 export const recipeTemplate = {
