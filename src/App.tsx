@@ -13,6 +13,7 @@ import { summarizeFermentables, summarizeHops } from './util'
 
 const accentColor = '#FB8B24'
 
+const concentrationUnitOptions = [{ value: 'ppm' }, { value: 'ppb' }, { value: 'mg/l' }]
 const gravityUnitOptions = [{ value: 'sg' }, { value: 'plato' }, { value: 'brix' }]
 const massUnitOptions = [{ value: 'mg' }, { value: 'g' }, { value: 'kg' }, { value: 'lb' }, { value: 'oz' }]
 const recipeTypeOptions = [{ value: 'cider' }, { value: 'kombucha' }, { value: 'soda' }, { value: 'other' }, { value: 'mead' }, { value: 'wine' }, { value: 'extract' }, { value: 'partial mash' }, { value: 'all grain' }]
@@ -72,6 +73,21 @@ function TextInput<T> ({ fontSize, form, multiline, name }: TextInputProps<T>): 
     <textarea {...form.register(name)} rows={5} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }} />
   ) : (
     <input {...form.register(name)} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }} />
+  )
+}
+
+interface ConcentrationInputProps<T> {
+  fontSize?: number
+  form: UseFormReturn<T>
+  name: Path<T>
+}
+
+function ConcentrationInput<T> ({ fontSize, form, name }: ConcentrationInputProps<T>): JSX.Element {
+  return (
+    <>
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={concentrationUnitOptions} />
+    </>
   )
 }
 
@@ -500,6 +516,43 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
             <td colSpan={5} style={{ textAlign: 'center' }}>
               <button onClick={() => cultures.append({ name: '', amount: { unit: 'g' } } as any)}>Add culture</button>
             </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <Spacer height={16} />
+      <Text size={24}>Water</Text>
+      <Spacer height={16} />
+
+      <table>
+        <tbody>
+          <tr>
+            <td>Name</td>
+            <td><TextInput form={form} name='ingredients.water_additions.0.name' /></td>
+          </tr>
+          <tr>
+            <td>Ca<sup>+2</sup></td>
+            <td><ConcentrationInput form={form} name='ingredients.water_additions.0.calcium' /></td>
+          </tr>
+          <tr>
+            <td>Mg<sup>+2</sup></td>
+            <td><ConcentrationInput form={form} name='ingredients.water_additions.0.magnesium' /></td>
+          </tr>
+          <tr>
+            <td>SO<sub>4</sub><sup>-2</sup></td>
+            <td><ConcentrationInput form={form} name='ingredients.water_additions.0.sulfate' /></td>
+          </tr>
+          <tr>
+            <td>Na<sup>+</sup></td>
+            <td><ConcentrationInput form={form} name='ingredients.water_additions.0.sodium' /></td>
+          </tr>
+          <tr>
+            <td>Cl<sup>-</sup></td>
+            <td><ConcentrationInput form={form} name='ingredients.water_additions.0.chloride' /></td>
+          </tr>
+          <tr>
+            <td>HCO<sub>3</sub><sup>-</sup></td>
+            <td><ConcentrationInput form={form} name='ingredients.water_additions.0.bicarbonate' /></td>
           </tr>
         </tbody>
       </table>

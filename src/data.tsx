@@ -410,7 +410,18 @@ export const recipeTemplate = {
         amount: { unit: 'ml', value: 1 }
       }
     ],
-    culture_additions: []
+    culture_additions: [],
+    water_additions: [
+      {
+        name: 'Västerås water',
+        calcium: { unit: 'mg/l', value: 29 },
+        magnesium: { unit: 'mg/l', value: 4.6 },
+        sulfate: { unit: 'mg/l', value: 23 },
+        sodium: { unit: 'mg/l', value: 11 },
+        chloride: { unit: 'mg/l', value: 20 },
+        bicarbonate: { unit: 'mg/l', value: 76 }
+      }
+    ]
   },
   mash: {
     mash_steps: [
