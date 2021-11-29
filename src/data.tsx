@@ -450,6 +450,6 @@ export const recipeTemplate = {
   },
   boil: { boil_time: { unit: 'min', value: 60 } },
   fermentation: {
-    fermentation_steps: [{ start_temperature: { unit: 'C', value: 20, free_rise: true } }]
+    fermentation_steps: [{ start_temperature: { unit: 'C', value: 20 }, free_rise: true }]
   }
 }
