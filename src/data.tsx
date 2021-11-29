@@ -219,7 +219,8 @@ export const fermentableAdditions: Fermentable[] = [
   { type: 'honey', name: 'Munkens Honung', producer: 'Munkens' },
   { type: 'sugar', name: 'Bread Syrup', producer: 'Dansukker' },
   { type: 'sugar', name: 'Cane sugar', producer: 'Dansukker' },
-  { type: 'sugar', name: 'Caster sugar', producer: 'Dansukker' }
+  { type: 'sugar', name: 'Caster sugar', producer: 'Dansukker' },
+  { type: 'sugar', name: 'Lactose' }
 ]
 
 type Hop = Pick<BeerJSON.HopVarietyBase, 'name' | 'form' | 'alpha_acid' | 'origin' | 'year'>
@@ -311,6 +312,7 @@ export function formatMiscellaneous (input: BeerJSON.MiscellaneousBase): { label
     case 'fining': icon = '🥽'; break
     case 'herb': icon = '🌿'; break
     case 'spice': icon = '🌶️'; break
+    case 'water agent': icon = '🚰'; break
     case 'wood': icon = '🪵'; break
     default: icon = '❓'
   }
@@ -333,7 +335,14 @@ export const miscellaneousAdditions: BeerJSON.MiscellaneousBase[] = [
   { type: 'spice', name: 'Cinnamon Stick' },
   { type: 'spice', name: 'Ginger' },
   { type: 'spice', name: 'Ground coriander seed' },
-  { type: 'spice', name: 'Vanilla pod' }
+  { type: 'spice', name: 'Vanilla pod' },
+  { type: 'water agent', name: 'Baking Soda (NaHCO₃)' },
+  { type: 'water agent', name: 'Calcium Chloride (CaCl₂)' },
+  { type: 'water agent', name: 'Canning Salt (NaCl)' },
+  { type: 'water agent', name: 'Chalk (CaCO₃)' },
+  { type: 'water agent', name: 'Epsom Salt (MgSO₄)' },
+  { type: 'water agent', name: 'Gypsum (CaSO₄)' },
+  { type: 'water agent', name: 'Lactic Acid 80%' }
 ]
 
 export function formatCulture (input: BeerJSON.CultureBase): { label: string, value: string } {
