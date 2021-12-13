@@ -62,6 +62,21 @@ function normalizeTime (time: BeerJSON.TimeType): BeerJSON.TimeType {
 }
 
 /**
+ * @returns calculated ABV as string.
+ */
+export function calculateABV (recipe: { original_gravity?: Partial<BeerJSON.GravityType>, final_gravity?: Partial<BeerJSON.GravityType> }): string {
+  if (recipe.original_gravity?.unit == null || recipe.original_gravity.value == null) return ''
+  if (recipe.final_gravity?.unit == null || recipe.final_gravity.value == null) return ''
+
+  const og = normalizeGravity({ unit: recipe.original_gravity.unit, value: recipe.original_gravity.value }).value
+  const fg = normalizeGravity({ unit: recipe.final_gravity.unit, value: recipe.final_gravity.value }).value
+
+  const abv = (76.08 * (og - fg) / (1.775 - og)) * (fg / 0.794)
+
+  return `${abv.toFixed(2)}%`
+}
+
+/**
  * @returns a short string summary of the fermentables.
  */
 export function summarizeFermentables (input: BeerJSON.FermentableAdditionType[]): string {

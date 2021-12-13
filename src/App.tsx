@@ -9,7 +9,7 @@ import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 
 import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, recipeTemplate, styles } from './data'
-import { summarizeFermentables, summarizeHops } from './util'
+import { calculateABV, summarizeFermentables, summarizeHops } from './util'
 
 const accentColor = '#FB8B24'
 
@@ -100,7 +100,7 @@ interface GravityInputProps<T> {
 function GravityInput<T> ({ fontSize, form, name }: GravityInputProps<T>): JSX.Element {
   return (
     <>
-      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
+      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} step={0.001} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
       <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={gravityUnitOptions} />
     </>
   )
@@ -268,10 +268,15 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
   const cultures = useFieldArray({ control: form.control, name: 'ingredients.culture_additions' })
   const mashSteps = useFieldArray({ control: form.control, name: 'mash.mash_steps' })
 
+  const [abvSummary, setAbvSummary] = useState(calculateABV(recipe))
   const [fermentablesSummary, setFermentablesSummary] = useState('')
   const [hopsSummary, setHopsSummary] = useState('')
 
   form.watch((values, info) => {
+    if ((info.name?.startsWith('original_gravity') ?? false) || (info.name?.startsWith('final_gravity') ?? false)) {
+      setAbvSummary(calculateABV(values))
+    }
+
     if (info.name?.startsWith('ingredients.fermentable_additions') ?? false) {
       setFermentablesSummary(summarizeFermentables(values?.ingredients?.fermentable_additions as any ?? []))
     }
@@ -327,6 +332,7 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
       <SingleInputWrapper title='Batch Size'><VolumeInput fontSize={20} form={form} name='batch_size' /></SingleInputWrapper>
       <SingleInputWrapper title='Original Gravity'><GravityInput fontSize={20} form={form} name='original_gravity' /></SingleInputWrapper>
       <SingleInputWrapper title='Final Gravity'><GravityInput fontSize={20} form={form} name='final_gravity' /></SingleInputWrapper>
+      <SingleInputWrapper title='ABV'><Text size={20}>{abvSummary}</Text></SingleInputWrapper>
       <SingleInputWrapper title='Notes'><TextInput fontSize={20} form={form} multiline name='notes' /></SingleInputWrapper>
 
       <Spacer height={16} />
