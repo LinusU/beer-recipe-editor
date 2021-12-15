@@ -236,6 +236,7 @@ export function formatHop (input: Hop): { label: string, value: string } {
   }
 
   switch (input.origin) {
+    case 'Australia': icon += '🇦🇺'; break
     case 'Czech': icon += '🇨🇿'; break
     case 'England': icon += '🇬🇧'; break
     case 'Germany': icon += '🇩🇪'; break
@@ -283,7 +284,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Ekuanot', form: 'pellet', alpha_acid: { unit: '%', value: 14 }, origin: 'USA', year: '2020' },
   { name: 'First Gold', form: 'pellet', alpha_acid: { unit: '%', value: 8 }, origin: 'England', year: '2020' },
   { name: 'Fuggle', form: 'pellet', alpha_acid: { unit: '%', value: 4.4 }, origin: 'England', year: '2020' },
-  { name: 'Galaxy', form: 'pellet', alpha_acid: { unit: '%', value: 16.6 }, origin: 'USA', year: '2020' },
+  { name: 'Galaxy', form: 'pellet', alpha_acid: { unit: '%', value: 16.6 }, origin: 'Australia', year: '2020' },
   { name: 'Hallertauer Mittelfrüh', form: 'pellet', alpha_acid: { unit: '%', value: 4 }, origin: 'Germany', year: '2020' },
   { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 3 }, origin: 'Germany', year: '2020' },
   { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 2.7 }, origin: 'Germany', year: '2019' },
