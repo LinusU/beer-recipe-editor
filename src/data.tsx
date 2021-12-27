@@ -273,6 +273,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Centennial', form: 'pellet', alpha_acid: { unit: '%', value: 9.5 }, origin: 'USA', year: '2019' },
   { name: 'Challenger', form: 'pellet', alpha_acid: { unit: '%', value: 6.1 }, origin: 'England', year: '2020' },
   { name: 'Challenger', form: 'pellet', alpha_acid: { unit: '%', value: 7.6 }, origin: 'England', year: '2019' },
+  { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2020' },
   { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 12.4 }, origin: 'USA', year: '2020' },
   { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 11.2 }, origin: 'USA', year: '2019' },
   { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 13.4 }, origin: 'USA', year: '2020' },
@@ -294,6 +295,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11 }, origin: 'USA', year: '2020' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2019' },
   { name: 'Motueka', form: 'pellet', alpha_acid: { unit: '%', value: 7.2 }, origin: 'New Zealand', year: '2020' },
+  { name: 'Northern Brewer', form: 'pellet', alpha_acid: { unit: '%', value: 6.4 }, origin: 'Germany', year: '2020' },
   { name: 'Pacifica', form: 'pellet', alpha_acid: { unit: '%', value: 3.9 }, origin: 'New Zealand', year: '2020' },
   { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 5.4 }, origin: 'Germany', year: '2020' },
   { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 6.6 }, origin: 'Germany', year: '2019' },
@@ -388,6 +390,7 @@ export const cultureAdditions: BeerJSON.CultureBase[] = [
   { type: 'ale', form: 'dry', name: 'Safale US-05', producer: 'Fermentis' },
   { type: 'ale', form: 'dry', name: 'Safale WB-06', producer: 'Fermentis' },
   { type: 'champagne', form: 'dry', name: 'EC-1118', producer: 'Lalvin' },
+  { type: 'lager', form: 'dry', name: 'Saflager S-23', producer: 'Fermentis' },
   { type: 'lager', form: 'dry', name: 'Saflager W-34/70', producer: 'Fermentis' }
 ]
 
