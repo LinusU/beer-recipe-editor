@@ -1,9 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference types="@beerjson/beerjson/types/ts/beerjson" />
-
 import slugify from '@sindresorhus/slugify'
 import React, { ChangeEvent, useState } from 'react'
-import { Path, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
+import { FieldValues, Path, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
 import FancySelect from 'react-select'
 import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
@@ -22,11 +19,12 @@ const timeUnitOptions = [{ value: 'sec' }, { value: 'min' }, { value: 'hr' }, { 
 const unitUnitOptions = [{ value: '1' }, { value: 'unit' }, { value: 'each' }, { value: 'dimensionless' }, { value: 'pkg' }]
 const volumeUnitOptions = [{ value: 'ml' }, { value: 'l' }, { value: 'tsp' }, { value: 'tbsp' }, { value: 'floz' }, { value: 'cup' }, { value: 'pt' }, { value: 'qt' }, { value: 'gal' }, { value: 'bbl' }, { value: 'ifloz' }, { value: 'ipt' }, { value: 'iqt' }, { value: 'igal' }, { value: 'ibbl' }]
 
-const Error: React.FC = ({ children }) => (
+const Error: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div style={{ padding: 10, borderColor: 'red', borderWidth: 2 }}>{children}</div>
 )
 
 interface SingleInputWrapperProps {
+  children: React.ReactNode
   title: string
 }
 
@@ -44,14 +42,14 @@ const SingleInputWrapper: React.FC<SingleInputWrapperProps> = ({ children, title
   </HStack>
 )
 
-interface SelectProps<T> {
+interface SelectProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
   options: ReadonlyArray<{ name?: string, value: string }>
 }
 
-function Select<T> ({ fontSize, form, name, options }: SelectProps<T>): JSX.Element {
+function Select<T extends FieldValues> ({ fontSize, form, name, options }: SelectProps<T>): JSX.Element {
   return (
     <select {...form.register(name)} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1 }}>
       {options.map((option) => (
@@ -61,14 +59,14 @@ function Select<T> ({ fontSize, form, name, options }: SelectProps<T>): JSX.Elem
   )
 }
 
-interface TextInputProps<T> {
+interface TextInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   multiline?: boolean
   name: Path<T>
 }
 
-function TextInput<T> ({ fontSize, form, multiline, name }: TextInputProps<T>): JSX.Element {
+function TextInput<T extends FieldValues> ({ fontSize, form, multiline, name }: TextInputProps<T>): JSX.Element {
   return (multiline ?? false) ? (
     <textarea {...form.register(name)} rows={5} style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, flexGrow: 1, fontSize, WebkitAppearance: 'none' }} />
   ) : (
@@ -76,13 +74,13 @@ function TextInput<T> ({ fontSize, form, multiline, name }: TextInputProps<T>): 
   )
 }
 
-interface ConcentrationInputProps<T> {
+interface ConcentrationInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function ConcentrationInput<T> ({ fontSize, form, name }: ConcentrationInputProps<T>): JSX.Element {
+function ConcentrationInput<T extends FieldValues> ({ fontSize, form, name }: ConcentrationInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -91,13 +89,13 @@ function ConcentrationInput<T> ({ fontSize, form, name }: ConcentrationInputProp
   )
 }
 
-interface GravityInputProps<T> {
+interface GravityInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function GravityInput<T> ({ fontSize, form, name }: GravityInputProps<T>): JSX.Element {
+function GravityInput<T extends FieldValues> ({ fontSize, form, name }: GravityInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} step={0.001} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -106,28 +104,13 @@ function GravityInput<T> ({ fontSize, form, name }: GravityInputProps<T>): JSX.E
   )
 }
 
-interface PercentInputProps<T> {
+interface TimeInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function PercentInput<T> ({ fontSize, form, name }: PercentInputProps<T>): JSX.Element {
-  return (
-    <>
-      <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
-      <Select fontSize={fontSize} form={form} name={`${name}.unit` as any} options={[{ value: '%' }]} />
-    </>
-  )
-}
-
-interface TimeInputProps<T> {
-  fontSize?: number
-  form: UseFormReturn<T>
-  name: Path<T>
-}
-
-function TimeInput<T> ({ fontSize, form, name }: TimeInputProps<T>): JSX.Element {
+function TimeInput<T extends FieldValues> ({ fontSize, form, name }: TimeInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -136,13 +119,13 @@ function TimeInput<T> ({ fontSize, form, name }: TimeInputProps<T>): JSX.Element
   )
 }
 
-interface TemperatureInputProps<T> {
+interface TemperatureInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function TemperatureInput<T> ({ fontSize, form, name }: TemperatureInputProps<T>): JSX.Element {
+function TemperatureInput<T extends FieldValues> ({ fontSize, form, name }: TemperatureInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -151,13 +134,13 @@ function TemperatureInput<T> ({ fontSize, form, name }: TemperatureInputProps<T>
   )
 }
 
-interface UseInputProps<T> {
+interface UseInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function UseInput<T> ({ fontSize, form, name }: UseInputProps<T>): JSX.Element {
+function UseInput<T extends FieldValues> ({ fontSize, form, name }: UseInputProps<T>): JSX.Element {
   return (
     <Select
       fontSize={fontSize}
@@ -173,13 +156,13 @@ function UseInput<T> ({ fontSize, form, name }: UseInputProps<T>): JSX.Element {
   )
 }
 
-interface MassOrVolumeInputProps<T> {
+interface MassOrVolumeInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function MassOrVolumeInput<T> ({ fontSize, form, name }: MassOrVolumeInputProps<T>): JSX.Element {
+function MassOrVolumeInput<T extends FieldValues> ({ fontSize, form, name }: MassOrVolumeInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -188,13 +171,13 @@ function MassOrVolumeInput<T> ({ fontSize, form, name }: MassOrVolumeInputProps<
   )
 }
 
-interface MassOrUnitOrVolumeInputProps<T> {
+interface MassOrUnitOrVolumeInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function MassOrUnitOrVolumeInput<T> ({ fontSize, form, name }: MassOrUnitOrVolumeInputProps<T>): JSX.Element {
+function MassOrUnitOrVolumeInput<T extends FieldValues> ({ fontSize, form, name }: MassOrUnitOrVolumeInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -203,13 +186,13 @@ function MassOrUnitOrVolumeInput<T> ({ fontSize, form, name }: MassOrUnitOrVolum
   )
 }
 
-interface VolumeInputProps<T> {
+interface VolumeInputProps<T extends FieldValues> {
   fontSize?: number
   form: UseFormReturn<T>
   name: Path<T>
 }
 
-function VolumeInput<T> ({ fontSize, form, name }: VolumeInputProps<T>): JSX.Element {
+function VolumeInput<T extends FieldValues> ({ fontSize, form, name }: VolumeInputProps<T>): JSX.Element {
   return (
     <>
       <input {...form.register(`${name}.value` as any, { valueAsNumber: true })} type='number' style={{ borderStyle: 'none', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, fontSize, flexGrow: 1, WebkitAppearance: 'none' }} />
@@ -242,7 +225,7 @@ const App: React.FC = () => {
         </HStack>
 
         <HStack padding={16}>
-          New file: <button onClick={() => setData({ version: 1, recipes: [recipeTemplate] })}>Create Recipe</button>
+          New file: <button onClick={() => setData({ version: 1, recipes: [recipeTemplate as any] })}>Create Recipe</button>
         </HStack>
       </VStack>
     )

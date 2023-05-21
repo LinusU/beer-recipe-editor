@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference types="@beerjson/beerjson/types/ts/beerjson" />
-
 import unreachable from 'ts-unreachable'
 
 type Style = Pick<BeerJSON.StyleBase, 'name' | 'category_number' | 'style_letter' | 'style_guide' | 'type'>
