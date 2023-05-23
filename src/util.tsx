@@ -3,7 +3,7 @@ import unreachable from 'ts-unreachable'
 /**
  * Normalize mass units to grams, and volume units to milliliters.
  */
-function normalizeAmount (amount: BeerJSON.MassType | BeerJSON.VolumeType): BeerJSON.MassType | BeerJSON.VolumeType {
+export function normalizeAmount (amount: BeerJSON.MassType | BeerJSON.VolumeType): BeerJSON.MassType | BeerJSON.VolumeType {
   switch (amount.unit) {
     // Mass
     case 'mg': return { unit: 'g', value: amount.value * 0.001 }

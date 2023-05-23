@@ -6,7 +6,7 @@ import Spacer from 'react-spacer'
 import { HStack, Text, VStack } from 'react-stacked'
 
 import { cultureAdditions, fermentableAdditions, formatCulture, formatFermentable, formatHop, formatMiscellaneous, formatStyle, hopAdditions, miscellaneousAdditions, parseCulture, parseFermentable, parseHop, parseMiscellaneous, parseStyle, recipeTemplate, styles } from './data'
-import { calculateABV, summarizeFermentables, summarizeHops } from './util'
+import { calculateABV, normalizeAmount, summarizeFermentables, summarizeHops } from './util'
 
 const accentColor = '#FB8B24'
 
@@ -22,6 +22,36 @@ const volumeUnitOptions = [{ value: 'ml' }, { value: 'l' }, { value: 'tsp' }, { 
 const Error: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div style={{ padding: 10, borderColor: 'red', borderWidth: 2 }}>{children}</div>
 )
+
+function percentageOf (item: { amount: BeerJSON.MassType | BeerJSON.VolumeType }, items: Array<{ amount: BeerJSON.MassType | BeerJSON.VolumeType }>): string {
+  if (item.amount.value == null || Number.isNaN(item.amount.value)) return ''
+
+  let total
+
+  for (const item of items) {
+    if (item.amount.value == null || Number.isNaN(item.amount.value)) continue
+
+    const amount = normalizeAmount(item.amount)
+
+    if (total == null) {
+      total = amount
+    } else {
+      if (total.unit !== amount.unit) {
+        return ''
+      }
+
+      total.value += amount.value
+    }
+  }
+
+  if (total == null) {
+    return ''
+  }
+
+  const amount = normalizeAmount(item.amount)
+
+  return (amount.value / total.value * 100).toFixed(0) + ' %'
+}
 
 interface SingleInputWrapperProps {
   children: React.ReactNode
@@ -329,12 +359,13 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
             <th>name</th>
             <th>producer</th>
             <th>amount</th>
+            <th>percent</th>
             <th />
           </tr>
         </thead>
 
         <tbody>
-          {fermentables.fields.map((item, index) => (
+          {fermentables.fields.map((item, index, items) => (
             <tr key={item.id}>
               <td colSpan={3}>
                 <FancySelect
@@ -350,6 +381,7 @@ const RecipeEditor: React.FC<{ recipe: BeerJSON.RecipeType }> = ({ recipe }) => 
                 />
               </td>
               <td><HStack><MassOrVolumeInput form={form} name={`ingredients.fermentable_additions.${index}.amount`} /></HStack></td>
+              <td style={{ fontVariantNumeric: 'proportional-nums', textAlign: 'right' }}>{percentageOf(item, items)}</td>
               <td><button onClick={() => fermentables.remove(index)}>Delete</button></td>
             </tr>
           ))}
