@@ -297,6 +297,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 2.7 }, origin: 'Germany', year: '2019' },
   { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 11.9 }, origin: 'Germany', year: '2020' },
   { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 10.7 }, origin: 'Germany', year: '2019' },
+  { name: 'Mandarina Bavaria', form: 'pellet', alpha_acid: { unit: '%', value: 8.8 }, origin: 'Germany', year: '2022' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11 }, origin: 'USA', year: '2020' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.1 }, origin: 'USA', year: '2020' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2019' },
@@ -316,7 +317,9 @@ export const hopAdditions: Hop[] = [
   { name: 'Styrian Golding Bobek', form: 'pellet', alpha_acid: { unit: '%', value: 3.5 }, origin: 'Slovenia', year: '2019' },
   { name: 'Target', form: 'pellet', alpha_acid: { unit: '%', value: 9.2 }, origin: 'England', year: '2020' },
   { name: 'Tettnanger', form: 'pellet', alpha_acid: { unit: '%', value: 3.8 }, origin: 'Germany', year: '2020' },
-  { name: 'Tettnanger', form: 'pellet', alpha_acid: { unit: '%', value: 3.7 }, origin: 'Germany', year: '2019' }
+  { name: 'Tettnanger', form: 'pellet', alpha_acid: { unit: '%', value: 3.7 }, origin: 'Germany', year: '2019' },
+  { name: 'Vista', form: 'pellet', alpha_acid: { unit: '%', value: 11.9 }, origin: 'USA', year: '2021' },
+  { name: 'Willamette', form: 'pellet', alpha_acid: { unit: '%', value: 5.6 }, origin: 'USA', year: '2022' },
 ]
 
 export function formatMiscellaneous (input: BeerJSON.MiscellaneousBase): { label: string, value: string } {
