@@ -266,6 +266,8 @@ export function parseHop (input: string): Hop {
 }
 
 export const hopAdditions: Hop[] = [
+  { name: 'Amarillo', form: 'pellet', alpha_acid: { unit: '%', value: 7.1 }, origin: 'USA', year: '2022' },
+  { name: 'Amarillo', form: 'pellet', alpha_acid: { unit: '%', value: 7.9 }, origin: 'USA', year: '2021' },
   { name: 'Amarillo', form: 'pellet', alpha_acid: { unit: '%', value: 8.7 }, origin: 'USA', year: '2020' },
   { name: 'Amarillo', form: 'pellet', alpha_acid: { unit: '%', value: 8.4 }, origin: 'USA', year: '2019' },
   { name: 'Azacca', form: 'pellet', alpha_acid: { unit: '%', value: 10.6 }, origin: 'USA', year: '2020' },
@@ -276,9 +278,12 @@ export const hopAdditions: Hop[] = [
   { name: 'Centennial', form: 'pellet', alpha_acid: { unit: '%', value: 9.5 }, origin: 'USA', year: '2019' },
   { name: 'Challenger', form: 'pellet', alpha_acid: { unit: '%', value: 6.1 }, origin: 'England', year: '2020' },
   { name: 'Challenger', form: 'pellet', alpha_acid: { unit: '%', value: 7.6 }, origin: 'England', year: '2019' },
+  { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 12.2 }, origin: 'USA', year: '2022' },
+  { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 12.5 }, origin: 'USA', year: '2021' },
   { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2020' },
   { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 12.4 }, origin: 'USA', year: '2020' },
   { name: 'Chinook', form: 'pellet', alpha_acid: { unit: '%', value: 11.2 }, origin: 'USA', year: '2019' },
+  { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 12.9 }, origin: 'USA', year: '2021' },
   { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 13.4 }, origin: 'USA', year: '2020' },
   { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 13.8 }, origin: 'USA', year: '2020' },
   { name: 'Citra', form: 'pellet', alpha_acid: { unit: '%', value: 13.7 }, origin: 'USA', year: '2019' },
@@ -289,15 +294,19 @@ export const hopAdditions: Hop[] = [
   { name: 'Ekuanot', form: 'pellet', alpha_acid: { unit: '%', value: 14 }, origin: 'USA', year: '2020' },
   { name: 'Eldorado', form: 'pellet', alpha_acid: { unit: '%', value: 15 }, origin: 'USA', year: '2022' },
   { name: 'First Gold', form: 'pellet', alpha_acid: { unit: '%', value: 8 }, origin: 'England', year: '2020' },
+  { name: 'Fuggle', form: 'pellet', alpha_acid: { unit: '%', value: 4.6 }, origin: 'England', year: '2021' },
   { name: 'Fuggle', form: 'pellet', alpha_acid: { unit: '%', value: 4.4 }, origin: 'England', year: '2020' },
   { name: 'Galaxy', form: 'pellet', alpha_acid: { unit: '%', value: 16.6 }, origin: 'Australia', year: '2020' },
   { name: 'Hallertauer Mittelfrüh', form: 'pellet', alpha_acid: { unit: '%', value: 4 }, origin: 'Germany', year: '2020' },
   { name: 'Hallertauer Mittelfrüh', form: 'pellet', alpha_acid: { unit: '%', value: 4.8 }, origin: 'Germany', year: '2020' },
   { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 3 }, origin: 'Germany', year: '2020' },
   { name: 'Hersbrucker', form: 'pellet', alpha_acid: { unit: '%', value: 2.7 }, origin: 'Germany', year: '2019' },
+  { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 14.5 }, origin: 'Germany', year: '2021' },
   { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 11.9 }, origin: 'Germany', year: '2020' },
   { name: 'Magnum', form: 'pellet', alpha_acid: { unit: '%', value: 10.7 }, origin: 'Germany', year: '2019' },
   { name: 'Mandarina Bavaria', form: 'pellet', alpha_acid: { unit: '%', value: 8.8 }, origin: 'Germany', year: '2022' },
+  { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.4 }, origin: 'USA', year: '2021' },
+  { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.1 }, origin: 'USA', year: '2021' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11 }, origin: 'USA', year: '2020' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.1 }, origin: 'USA', year: '2020' },
   { name: 'Mosaic', form: 'pellet', alpha_acid: { unit: '%', value: 11.8 }, origin: 'USA', year: '2019' },
@@ -306,6 +315,7 @@ export const hopAdditions: Hop[] = [
   { name: 'Northern Brewer', form: 'pellet', alpha_acid: { unit: '%', value: 6.4 }, origin: 'Germany', year: '2020' },
   { name: 'Pacifica', form: 'pellet', alpha_acid: { unit: '%', value: 3.9 }, origin: 'New Zealand', year: '2020' },
   { name: 'Pacifica', form: 'pellet', alpha_acid: { unit: '%', value: 5 }, origin: 'New Zealand', year: '2020' },
+  { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 8.2 }, origin: 'Germany', year: '2021' },
   { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 5.4 }, origin: 'Germany', year: '2020' },
   { name: 'Perle', form: 'pellet', alpha_acid: { unit: '%', value: 6.6 }, origin: 'Germany', year: '2019' },
   { name: 'Saaz', form: 'pellet', alpha_acid: { unit: '%', value: 3.1 }, origin: 'Czech', year: '2020' },
@@ -345,6 +355,7 @@ export function parseMiscellaneous (input: string): BeerJSON.MiscellaneousBase {
 }
 
 export const miscellaneousAdditions: BeerJSON.MiscellaneousBase[] = [
+  { type: 'fining', name: 'Gelatin Powder' },
   { type: 'fining', name: 'Gelatin Sheet' },
   { type: 'fining', name: 'Protafloc' },
   { type: 'spice', name: 'Bitter orange peel' },
